@@ -2,6 +2,10 @@
 name = "subtile"
 version = "0.1.0"
 edition = "2021"
+description = "A crate of utils to operate traitements on subtitles"
+repository = "https://github.com/gwen-lg/subtile"
+keywords = ["subtitle", "library", "parse", "write", "vobsub"]
+categories = ["command-line-utilities", "encoding", "multimedia::encoding", "parser-implementations"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
