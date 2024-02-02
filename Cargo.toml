@@ -6,6 +6,7 @@ description = "A crate of utils to operate traitements on subtitles"
 repository = "https://github.com/gwen-lg/subtile"
 keywords = ["subtitle", "library", "parse", "write", "vobsub"]
 categories = ["command-line-utilities", "encoding", "multimedia::encoding", "parser-implementations"]
+license = "LGPL-3.0-or-later"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
