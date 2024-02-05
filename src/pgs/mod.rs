@@ -6,6 +6,7 @@
 mod decoder;
 mod segment;
 mod sup;
+mod u24;
 
 pub use decoder::{DecodeTimeImage, DecodeTimeOnly, PgsDecoder};
 pub use sup::SupParser;
