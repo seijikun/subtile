@@ -2,6 +2,7 @@ use crate::time::{TimePoint, TimeSpan};
 use std::io::{BufRead, Seek};
 
 use super::{
+    ods,
     segment::{read_header, skip_segment, SegmentTypeCode},
     PgsError,
 };
@@ -61,10 +62,12 @@ impl PgsDecoder for DecodeTimeOnly {
     }
 }
 
+type PgsImage = (u16, u16, Vec<u8>);
+
 /// Decoder for `PGS` who provide the times and images of the subtitles.
 pub struct DecodeTimeImage {}
 impl PgsDecoder for DecodeTimeImage {
-    type Output = (TimeSpan, ());
+    type Output = (TimeSpan, PgsImage);
 
     fn parse_next<R>(reader: &mut R) -> Result<Option<Self::Output>, PgsError>
     where
@@ -72,6 +75,7 @@ impl PgsDecoder for DecodeTimeImage {
     {
         let mut start_time = None;
         let mut subtitle = None;
+        let mut image = None;
 
         while let Some(segment) = {
             if subtitle.is_some() {
@@ -82,12 +86,20 @@ impl PgsDecoder for DecodeTimeImage {
         } {
             let header = segment?;
             match header.type_code() {
+                SegmentTypeCode::Ods => {
+                    let seg_size = header.size() as usize;
+                    let ods = ods::read(reader, seg_size)?;
+
+                    image = Some((ods.width, ods.height, ods.object_data))
+                }
                 SegmentTypeCode::End => {
                     let time = TimePoint::from_msecs(i64::from(header.presentation_time()));
 
                     if let Some(start_time) = start_time {
                         let times = TimeSpan::new(start_time, time);
-                        subtitle = Some((times, ()));
+
+                        let image = image.take().ok_or_else(|| PgsError::MissingImage)?;
+                        subtitle = Some((times, image));
                     } else {
                         start_time = Some(time);
                     }

@@ -4,6 +4,7 @@
 //! <https://blog.thescorpius.com/index.php/2017/07/15/presentation-graphic-stream-sup-files-bluray-subtitle-format/>
 //!
 mod decoder;
+mod ods;
 mod segment;
 mod sup;
 mod u24;
@@ -30,6 +31,10 @@ pub enum PgsError {
         path: PathBuf,
     },
 
+    /// Encapsulates errors from `Object Definition Segment` parsing.
+    #[error("Object Definition Segment parsing")]
+    ODSParse(#[from] ods::Error),
+
     /// Invalid segment type code value.
     #[error("Invalid value '{value:#02x}' for Segment Type Code ")]
     SegmentInvalidTypeCode {
@@ -54,6 +59,10 @@ pub enum PgsError {
         /// type code of the segment we skip
         type_code: SegmentTypeCode,
     },
+
+    /// Error if image is missing to complete the parsing of a subtitle.
+    #[error("Missing image during `Presentation Graphic Stream (PGS)` parsing")]
+    MissingImage,
 }
 
 /// Error from data read for parsing.
