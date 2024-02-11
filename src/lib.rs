@@ -23,9 +23,11 @@
 pub mod content;
 mod errors;
 pub mod image;
+pub mod pgs;
 pub mod srt;
 pub mod time;
 mod util;
 pub mod vobsub;
 
 pub use errors::SubtileError;
+pub use pgs::SupParser;
