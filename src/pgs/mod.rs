@@ -9,8 +9,18 @@ mod sup;
 pub use decoder::PgsDecoder;
 pub use sup::SupParser;
 
+use std::{io, path::PathBuf};
 use thiserror::Error;
 
 /// Error for `Pgs` handling.
 #[derive(Debug, Error)]
-pub enum PgsError {}
+pub enum PgsError {
+    /// Io error on a path.
+    #[error("Io error on '{path}'")]
+    Io {
+        /// Source error
+        source: io::Error,
+        /// Path of the file we tried to read
+        path: PathBuf,
+    },
+}

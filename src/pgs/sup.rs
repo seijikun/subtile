@@ -1,5 +1,10 @@
-use super::PgsDecoder;
-use std::{io::BufRead, marker::PhantomData};
+use super::{PgsDecoder, PgsError};
+use std::{
+    fs::{self, File},
+    io::{BufRead, BufReader},
+    marker::PhantomData,
+    path::Path,
+};
 
 /// To parse `Presentation Graphic Stream` content `BluRay` subtitle format (`.sup` file).
 pub struct SupParser<Reader, Decoder>
@@ -22,5 +27,21 @@ where
             reader,
             phantom_data: PhantomData,
         }
+    }
+
+    /// Create a parser for a `*.sup` file from the path of the file.
+    #[profiling::function]
+    pub fn from_file<P>(path: P) -> Result<SupParser<BufReader<File>, Decoder>, PgsError>
+    where
+        P: AsRef<Path>,
+    {
+        let path = path.as_ref();
+        let sup_file = fs::File::open(path).map_err(|source| PgsError::Io {
+            source,
+            path: path.into(),
+        })?;
+
+        let reader = BufReader::new(sup_file);
+        Ok(SupParser::new(reader))
     }
 }
