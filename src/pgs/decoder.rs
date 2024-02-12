@@ -3,6 +3,7 @@ use std::io::{BufRead, Seek};
 
 use super::{
     ods,
+    pgs_image::RleEncodedImage,
     segment::{read_header, skip_segment, SegmentTypeCode},
     PgsError,
 };
@@ -62,12 +63,10 @@ impl PgsDecoder for DecodeTimeOnly {
     }
 }
 
-type PgsImage = (u16, u16, Vec<u8>);
-
 /// Decoder for `PGS` who provide the times and images of the subtitles.
 pub struct DecodeTimeImage {}
 impl PgsDecoder for DecodeTimeImage {
-    type Output = (TimeSpan, PgsImage);
+    type Output = (TimeSpan, RleEncodedImage);
 
     fn parse_next<R>(reader: &mut R) -> Result<Option<Self::Output>, PgsError>
     where
@@ -90,7 +89,7 @@ impl PgsDecoder for DecodeTimeImage {
                     let seg_size = header.size() as usize;
                     let ods = ods::read(reader, seg_size)?;
 
-                    image = Some((ods.width, ods.height, ods.object_data))
+                    image = Some(RleEncodedImage::new(ods.width, ods.height, ods.object_data))
                 }
                 SegmentTypeCode::End => {
                     let time = TimePoint::from_msecs(i64::from(header.presentation_time()));

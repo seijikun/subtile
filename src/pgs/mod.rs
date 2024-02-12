@@ -5,11 +5,13 @@
 //!
 mod decoder;
 mod ods;
+mod pgs_image;
 mod segment;
 mod sup;
 mod u24;
 
 pub use decoder::{DecodeTimeImage, DecodeTimeOnly, PgsDecoder};
+pub use pgs_image::RleEncodedImage;
 pub use sup::SupParser;
 
 use self::segment::SegmentTypeCode;
