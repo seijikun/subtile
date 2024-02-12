@@ -7,7 +7,7 @@ mod decoder;
 mod segment;
 mod sup;
 
-pub use decoder::{DecodeTimeOnly, PgsDecoder};
+pub use decoder::{DecodeTimeImage, DecodeTimeOnly, PgsDecoder};
 pub use sup::SupParser;
 
 use self::segment::SegmentTypeCode;

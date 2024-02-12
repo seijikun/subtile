@@ -2,7 +2,7 @@ use crate::time::{TimePoint, TimeSpan};
 use std::io::{BufRead, Seek};
 
 use super::{
-    segment::{read_header, SegmentTypeCode},
+    segment::{read_header, skip_segment, SegmentTypeCode},
     PgsError,
 };
 
@@ -55,6 +55,48 @@ impl PgsDecoder for DecodeTimeOnly {
                     // Not managed for now
                 }
             }
+        }
+
+        Ok(subtitle)
+    }
+}
+
+/// Decoder for `PGS` who provide the times and images of the subtitles.
+pub struct DecodeTimeImage {}
+impl PgsDecoder for DecodeTimeImage {
+    type Output = (TimeSpan, ());
+
+    fn parse_next<R>(reader: &mut R) -> Result<Option<Self::Output>, PgsError>
+    where
+        R: BufRead + Seek,
+    {
+        let mut start_time = None;
+        let mut subtitle = None;
+
+        while let Some(segment) = {
+            if subtitle.is_some() {
+                None
+            } else {
+                read_header(reader).transpose()
+            }
+        } {
+            let header = segment?;
+            match header.type_code() {
+                SegmentTypeCode::End => {
+                    let time = TimePoint::from_msecs(i64::from(header.presentation_time()));
+
+                    if let Some(start_time) = start_time {
+                        let times = TimeSpan::new(start_time, time);
+                        subtitle = Some((times, ()));
+                    } else {
+                        start_time = Some(time);
+                    }
+                }
+                _ => {
+                    // Segment not taken into account are skipped
+                    skip_segment(reader, &header)?;
+                }
+            };
         }
 
         Ok(subtitle)

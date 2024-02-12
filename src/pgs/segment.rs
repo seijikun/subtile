@@ -117,51 +117,16 @@ fn parse_segment_header(buffer: [u8; HEADER_LEN]) -> Result<Option<SegmentHeader
     }))
 }
 
-/// Struct to parse segments of a pgs (Presentation Graphic Stream).
-pub(crate) struct SegmentParser<Reader>
-where
-    Reader: BufRead,
-{
-    /// Reader of content of the .sup file
-    reader: Reader,
-}
-
-impl<Reader> SegmentParser<Reader>
-where
-    Reader: BufRead + Seek,
-{
-    /// create a `*.sup` parser from a reader (impl Read trait).
-    pub const fn new(reader: Reader) -> Self {
-        Self { reader }
-    }
-
-    fn skip_segment(&mut self, header: &SegmentHeader) -> Result<(), PgsError> {
-        let data_size: usize = header.size() as usize;
-        self.reader
-            .skip_data(data_size)
-            .map_err(|source| PgsError::SegmentSkip {
-                source,
-                type_code: header.type_code(),
-            })
-    }
-
-    fn read_segment(&mut self) -> Result<Option<SegmentHeader>, PgsError> {
-        read_header(&mut self.reader)?
-            .map(|header| {
-                self.skip_segment(&header)?;
-                Ok(header)
-            })
-            .transpose()
-    }
-}
-
-impl<Reader> Iterator for SegmentParser<Reader>
-where
-    Reader: BufRead + Seek,
-{
-    type Item = Result<SegmentHeader, PgsError>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.read_segment().transpose()
-    }
+/// skip segment
+pub fn skip_segment<R: BufRead + Seek>(
+    reader: &mut R,
+    header: &SegmentHeader,
+) -> Result<(), PgsError> {
+    let data_size: usize = header.size() as usize;
+    reader
+        .skip_data(data_size)
+        .map_err(|source| PgsError::SegmentSkip {
+            source,
+            type_code: header.type_code(),
+        })
 }
