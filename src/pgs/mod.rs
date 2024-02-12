@@ -7,9 +7,10 @@ mod decoder;
 mod segment;
 mod sup;
 
-pub use decoder::PgsDecoder;
+pub use decoder::{DecodeTimeOnly, PgsDecoder};
 pub use sup::SupParser;
 
+use self::segment::SegmentTypeCode;
 use std::{
     io::{self, BufRead, Seek},
     path::PathBuf,
@@ -33,6 +34,24 @@ pub enum PgsError {
     SegmentInvalidTypeCode {
         /// Value tried to be Interpréted in Segment Type.
         value: u8,
+    },
+
+    /// An error occurred during Segment Header reading.
+    #[error("Failed to read a complete segment header.")]
+    SegmentFailReadHeader,
+
+    /// Missing expected `PG` Magic number.
+    #[error("Unable to read segment - PG missing!")]
+    SegmentPGMissing,
+
+    /// `ReadError` occurred during skipping the segment.
+    #[error("Skipping Segment {type_code}")]
+    SegmentSkip {
+        /// Parent `ReadError`
+        #[source]
+        source: ReadError,
+        /// type code of the segment we skip
+        type_code: SegmentTypeCode,
     },
 }
 

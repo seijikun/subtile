@@ -1,7 +1,7 @@
 use super::{PgsDecoder, PgsError};
 use std::{
     fs::{self, File},
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Seek},
     marker::PhantomData,
     path::Path,
 };
@@ -18,7 +18,7 @@ where
 
 impl<Reader, Decoder> SupParser<Reader, Decoder>
 where
-    Reader: BufRead,
+    Reader: BufRead + Seek,
     Decoder: PgsDecoder,
 {
     /// create a parser of from a buffered reader (impl [`std::io::BufRead`] trait).
@@ -48,12 +48,12 @@ where
 
 impl<Reader, Decoder> Iterator for SupParser<Reader, Decoder>
 where
-    Reader: BufRead,
+    Reader: BufRead + Seek,
     Decoder: PgsDecoder,
 {
-    type Item = Result<(), PgsError>;
+    type Item = Result<Decoder::Output, PgsError>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        None
+        Decoder::parse_next(&mut self.reader).transpose()
     }
 }
