@@ -45,3 +45,15 @@ where
         Ok(SupParser::new(reader))
     }
 }
+
+impl<Reader, Decoder> Iterator for SupParser<Reader, Decoder>
+where
+    Reader: BufRead,
+    Decoder: PgsDecoder,
+{
+    type Item = Result<(), PgsError>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        None
+    }
+}
