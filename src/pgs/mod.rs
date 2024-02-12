@@ -10,7 +10,10 @@ mod sup;
 pub use decoder::PgsDecoder;
 pub use sup::SupParser;
 
-use std::{io, path::PathBuf};
+use std::{
+    io::{self, BufRead, Seek},
+    path::PathBuf,
+};
 use thiserror::Error;
 
 /// Error for `Pgs` handling.
@@ -32,3 +35,63 @@ pub enum PgsError {
         value: u8,
     },
 }
+
+/// Error from data read for parsing.
+#[derive(Debug, Error)]
+pub enum ReadError {
+    /// Reading of the buffer have failed.
+    #[error("Failed read buffer of size : {buffer_size}")]
+    FailedReadBuffer {
+        /// `io` error
+        #[source]
+        source: io::Error,
+        /// size of the buffer
+        buffer_size: usize,
+    },
+
+    /// An error has occurred during buffer filling from reader.
+    #[error("Failed to fill buffer from Reader")]
+    FailedFillBuf(#[source] io::Error),
+
+    /// An error has occurred during seek in reader.
+    #[error("Seek failed")]
+    FailedSeek(#[source] io::Error),
+}
+
+/// Super-trait of `BufRead` + `Seek` to extend reading functionalities useful for parsing.
+pub trait ReadExt
+where
+    Self: BufRead + Seek,
+{
+    /// Read a buffer from a reader with error management.
+    ///
+    /// # Errors
+    ///
+    /// Will return `FailedReadBuffer` if `read_exact` failed.
+    fn read_buffer(&mut self, to_read: &mut [u8]) -> Result<(), ReadError> {
+        self.read_exact(to_read)
+            .map_err(|source| ReadError::FailedReadBuffer {
+                source,
+                buffer_size: to_read.len(),
+            })
+    }
+
+    /// Skip data from a reader with error management.
+    ///
+    /// # Errors
+    ///
+    /// Will return `FailedFillBuf` if `fill_buf` failed.
+    /// `FailedSeek` if `seek` failed.
+    fn skip_data(&mut self, to_skip: usize) -> Result<(), ReadError> {
+        let buff = self.fill_buf().map_err(ReadError::FailedFillBuf)?;
+
+        if buff.len() >= to_skip {
+            self.consume(to_skip);
+        } else {
+            self.seek(std::io::SeekFrom::Current(to_skip as i64))
+                .map_err(ReadError::FailedSeek)?;
+        }
+        Ok(())
+    }
+}
+impl<U> ReadExt for U where U: BufRead + Seek {}
