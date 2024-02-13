@@ -2,7 +2,7 @@ use crate::time::{TimePoint, TimeSpan};
 use std::io::{BufRead, Seek};
 
 use super::{
-    ods,
+    ods, pds,
     pgs_image::RleEncodedImage,
     segment::{read_header, skip_segment, SegmentTypeCode},
     PgsError,
@@ -74,6 +74,7 @@ impl PgsDecoder for DecodeTimeImage {
     {
         let mut start_time = None;
         let mut subtitle = None;
+        let mut palette = None;
         let mut image = None;
 
         while let Some(segment) = {
@@ -85,6 +86,11 @@ impl PgsDecoder for DecodeTimeImage {
         } {
             let header = segment?;
             match header.type_code() {
+                SegmentTypeCode::Pds => {
+                    let seg_size = header.size() as usize;
+                    let pds = pds::read(reader, seg_size)?;
+                    palette = Some(pds.palette_entries);
+                }
                 SegmentTypeCode::Ods => {
                     let seg_size = header.size() as usize;
                     let ods = ods::read(reader, seg_size)?;

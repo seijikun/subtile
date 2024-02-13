@@ -5,6 +5,7 @@
 //!
 mod decoder;
 mod ods;
+mod pds;
 mod pgs_image;
 mod segment;
 mod sup;
@@ -36,6 +37,10 @@ pub enum PgsError {
     /// Encapsulates errors from `Object Definition Segment` parsing.
     #[error("Object Definition Segment parsing")]
     ODSParse(#[from] ods::Error),
+
+    /// Encapsulates errors from `Palette Definition Segment` parsing.
+    #[error("Palette Definition Segment parsing")]
+    PDSParse(#[from] pds::Error),
 
     /// Invalid segment type code value.
     #[error("Invalid value '{value:#02x}' for Segment Type Code ")]
