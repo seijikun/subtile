@@ -95,7 +95,13 @@ impl PgsDecoder for DecodeTimeImage {
                     let seg_size = header.size() as usize;
                     let ods = ods::read(reader, seg_size)?;
 
-                    image = Some(RleEncodedImage::new(ods.width, ods.height, ods.object_data))
+                    let palette = palette.take().ok_or_else(|| PgsError::MissingPalette)?;
+                    image = Some(RleEncodedImage::new(
+                        ods.width,
+                        ods.height,
+                        palette,
+                        ods.object_data,
+                    ))
                 }
                 SegmentTypeCode::End => {
                     let time = TimePoint::from_msecs(i64::from(header.presentation_time()));

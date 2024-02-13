@@ -1,3 +1,4 @@
+use super::pds::Palette;
 use crate::image::ImageSize;
 
 /// Store Image data directly from `PGS`.
@@ -5,6 +6,7 @@ use crate::image::ImageSize;
 pub struct RleEncodedImage {
     width: u16,
     height: u16,
+    palette: Palette,
     raw: Vec<u8>,
 }
 
@@ -13,8 +15,13 @@ impl RleEncodedImage {
     ///
     /// [`SupParser`]: super::sup::SupParser
     #[must_use]
-    pub fn new(width: u16, height: u16, raw: Vec<u8>) -> Self {
-        Self { width, height, raw }
+    pub fn new(width: u16, height: u16, palette: Palette, raw: Vec<u8>) -> Self {
+        Self {
+            width,
+            height,
+            palette,
+            raw,
+        }
     }
 }
 

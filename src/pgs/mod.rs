@@ -70,6 +70,10 @@ pub enum PgsError {
     /// Error if image is missing to complete the parsing of a subtitle.
     #[error("Missing image during `Presentation Graphic Stream (PGS)` parsing")]
     MissingImage,
+
+    /// Palette is missing after image parsing.
+    #[error("Missing palette after image parsing")]
+    MissingPalette,
 }
 
 /// Error from data read for parsing.
