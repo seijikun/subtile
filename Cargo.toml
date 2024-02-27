@@ -5,7 +5,7 @@ edition = "2021"
 description = "A crate of utils to operate traitements on subtitles"
 repository = "https://github.com/gwen-lg/subtile"
 authors = ["Eric Kidd <git@randomhacks.net>", "Gwen Lg <me@gwenlg.fr>"]
-keywords = ["subtitle", "library", "parse", "write", "vobsub"]
+keywords = ["subtitle", "library", "parse", "vobsub", "pgs"]
 categories = [
     "command-line-utilities",
     "encoding",
