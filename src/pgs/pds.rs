@@ -12,16 +12,26 @@ pub enum Error {
 #[derive(Debug, Clone)]
 pub struct Palette {
     entries: Vec<PaletteEntry>,
+    offset: i16,
 }
 impl Palette {
     fn new(entries: Vec<PaletteEntry>) -> Self {
-        Self { entries }
+        let offset = compute_offset(&entries);
+        Self { entries, offset }
     }
 
     pub fn get(&self, id: u8) -> Option<&PaletteEntry> {
-        //HACK with -1, the color id is not necessarily equal to idx + 1
-        let idx = id - 1;
+        let idx = i16::from(id) + self.offset;
         self.entries.get(idx as usize)
+    }
+}
+
+fn compute_offset(palette: &[PaletteEntry]) -> i16 {
+    //HACK offset is computed only on the first element, should be checked for all entries
+    if palette.is_empty() {
+        0
+    } else {
+        0 - i16::from(palette[0]._palette_entry_id)
     }
 }
 
