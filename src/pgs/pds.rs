@@ -10,6 +10,22 @@ pub enum Error {
 }
 
 #[derive(Debug, Clone)]
+pub struct Palette {
+    entries: Vec<PaletteEntry>,
+}
+impl Palette {
+    fn new(entries: Vec<PaletteEntry>) -> Self {
+        Self { entries }
+    }
+
+    pub fn get(&self, id: u8) -> Option<&PaletteEntry> {
+        //HACK with -1, the color id is not necessarily equal to idx + 1
+        let idx = id - 1;
+        self.entries.get(idx as usize)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct PaletteEntry {
     _palette_entry_id: u8,      // Entry number of the palette
     pub luminance: u8,          // Luminance (Y value)
@@ -21,7 +37,7 @@ pub struct PaletteEntry {
 pub(crate) struct PaletteDefinitionSegment {
     _palette_id: u8,             // ID of the palette
     _palette_version_number: u8, //	Version of this palette within the Epoch
-    pub palette_entries: Vec<PaletteEntry>,
+    pub palette: Palette,
 }
 
 pub(crate) fn read<R: Read>(
@@ -54,6 +70,6 @@ pub(crate) fn read<R: Read>(
     Ok(PaletteDefinitionSegment {
         _palette_id: palette_id,
         _palette_version_number: palette_version_number,
-        palette_entries,
+        palette: Palette::new(palette_entries),
     })
 }

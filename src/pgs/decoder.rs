@@ -89,7 +89,7 @@ impl PgsDecoder for DecodeTimeImage {
                 SegmentTypeCode::Pds => {
                     let seg_size = header.size() as usize;
                     let pds = pds::read(reader, seg_size)?;
-                    palette = Some(pds.palette_entries);
+                    palette = Some(pds.palette);
                 }
                 SegmentTypeCode::Ods => {
                     let seg_size = header.size() as usize;
