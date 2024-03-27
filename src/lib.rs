@@ -7,7 +7,8 @@
 //! Your feedback and contributions are welcome!  Please see
 //! [Subtile](https://github.com/gwen-lg/subtile) on GitHub for details.
 
-#![warn(missing_docs)]
+#![deny(missing_docs)]
+#![deny(unused_imports)]
 // For error-chain.
 #![recursion_limit = "1024"]
 
