@@ -16,6 +16,7 @@
 #![deny(clippy::doc_markdown)]
 #![deny(clippy::extra_unused_lifetimes)]
 #![deny(clippy::if_not_else)]
+#![deny(clippy::missing_panics_doc)]
 #![deny(clippy::missing_fields_in_debug)]
 #![deny(clippy::must_use_candidate)]
 #![deny(clippy::or_fun_call)]
