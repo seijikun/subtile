@@ -56,4 +56,9 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         Decoder::parse_next(&mut self.reader).transpose()
     }
+
+    // Set lower bound to promote the allocation of a minimum number of elements.
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (500, None)
+    }
 }
