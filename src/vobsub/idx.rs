@@ -56,8 +56,9 @@ impl Index {
     }
 
     /// Create an Index from a palette and sub data
-    pub fn init(palette: Palette, sub_data: Vec<u8>) -> Result<Index, SubError> {
-        Ok(Index { palette, sub_data })
+    #[must_use]
+    pub fn init(palette: Palette, sub_data: Vec<u8>) -> Index {
+        Index { palette, sub_data }
     }
 
     /// Get the palette associated with this `*.idx` file.
