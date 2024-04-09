@@ -34,6 +34,9 @@ fn hex_rgb(input: &[u8]) -> IResult<&[u8], Rgb<u8>> {
 pub type Palette = [Rgb<u8>; 16];
 
 /// Parse a text as Palette
+/// # Errors
+///
+/// Will return `Err` if the input don't have 16 entries.
 pub fn palette(input: &[u8]) -> IResult<&[u8], Palette> {
     let res = map_res(separated_list0(tag(b", "), hex_rgb), |vec: Vec<Rgb<u8>>| {
         if vec.len() != 16 {

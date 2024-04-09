@@ -4,6 +4,9 @@ use std::io;
 use crate::time::TimeSpan;
 
 /// Write subtitles in srt format
+/// # Errors
+///
+/// Will return `Err` if write in `writer` return an `Err`.
 pub fn write_srt(
     data: &[(TimeSpan, String)],
     writer: &mut impl io::Write,
