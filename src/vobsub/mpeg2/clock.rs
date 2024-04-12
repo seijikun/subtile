@@ -51,10 +51,10 @@ impl fmt::Display for Clock {
 
 /// Parse a 33-bit `Clock` value with 3 marker bits, consuming 36 bits.
 pub fn clock(i: (&[u8], usize)) -> IResult<(&[u8], usize), Clock> {
-    let marker = tag(0b1, 1u8);
-    let hi_p = take(3u64);
-    let mid_p = take(15u64);
-    let lo_p = take(15u64);
+    let marker = tag(0b1, 1usize);
+    let hi_p = take(3usize);
+    let mid_p = take(15usize);
+    let lo_p = take(15usize);
 
     let (input, (hi, _, mid, _, lo, _)): ((&[u8], usize), (u64, _, u64, _, u64, _)) =
         (hi_p, &marker, mid_p, &marker, lo_p, &marker).parse(i)?;
