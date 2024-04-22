@@ -13,9 +13,9 @@
 //!     let sub = sub.unwrap();
 //!     println!("Time: {:0.3}-{:0.3}", sub.start_time(), sub.end_time());
 //!     println!("Always show: {:?}", sub.force());
-//!     let coords = sub.coordinates();
-//!     println!("At: {}, {}", coords.left(), coords.top());
-//!     println!("Size: {}x{}", coords.width(), coords.height());
+//!     let area = sub.area();
+//!     println!("At: {}, {}", area.left(), area.top());
+//!     println!("Size: {}x{}", area.width(), area.height());
 //!     let img: image::RgbaImage = sub.to_image(idx.palette());
 //!
 //!     // You can save or manipulate `img` using the APIs provided by the Rust
@@ -70,4 +70,4 @@ mod sub;
 pub use self::idx::{read_palette, Index};
 pub use self::palette::{palette, Palette};
 pub use self::probe::{is_idx_file, is_sub_file};
-pub use self::sub::{subtitles, Coordinates, Subtitle, Subtitles};
+pub use self::sub::{subtitles, Area, Subtitle, Subtitles};

@@ -48,14 +48,14 @@ fn palette_entries(input: &[u8]) -> IResult<&[u8], [u8; 4]> {
 
 /// Location at which to display the subtitle.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinates {
+pub struct Area {
     x1: u16,
     y1: u16,
     x2: u16,
     y2: u16,
 }
 
-impl Coordinates {
+impl Area {
     /// The leftmost edge of the subtitle.
     #[must_use]
     pub fn left(&self) -> u16 {
@@ -96,11 +96,11 @@ fn coordinate(input: (&[u8], usize)) -> IResult<(&[u8], usize), u16> {
 
 /// Parse four 12-bit coordinate values as a rectangle (with right and
 /// bottom coordinates inclusive).
-fn coordinates(input: &[u8]) -> IResult<&[u8], Coordinates> {
+fn area(input: &[u8]) -> IResult<&[u8], Area> {
     bits(|input| {
         let (input, (x1, x2, y1, y2)) =
             (coordinate, coordinate, coordinate, coordinate).parse(input)?;
-        Ok((input, Coordinates { x1, y1, x2, y2 }))
+        Ok((input, Area { x1, y1, x2, y2 }))
     })(input)
 }
 
@@ -130,7 +130,7 @@ enum ControlCommand<'a> {
     /// channel data.
     Alpha([u8; 4]),
     /// Coordinates at which to display the subtitle.
-    Coordinates(Coordinates),
+    Coordinates(Area),
     /// Offsets of first and second scan line in our data buffer.  Note
     /// that the data buffer stores alternating scan lines separately, so
     /// these are the first line in each of the two chunks.
@@ -154,7 +154,7 @@ fn control_command(input: &[u8]) -> IResult<&[u8], ControlCommand> {
             ControlCommand::Alpha,
         ),
         map(
-            preceded(tag_bytes(&[0x05]), coordinates),
+            preceded(tag_bytes(&[0x05]), area),
             ControlCommand::Coordinates,
         ),
         map(
@@ -217,8 +217,8 @@ pub struct Subtitle {
     end_time: Option<f64>,
     /// Should this subtitle be shown even when subtitles are off?
     force: bool,
-    /// Coordinates at which to display the subtitle.
-    coordinates: Coordinates,
+    /// Area coordinates at which to display the subtitle.
+    area: Area,
     /// Map each of the 4 colors in this subtitle to a 4-bit palette.
     palette: [u8; 4],
     /// Map each of the 4 colors in this subtitle to 4 bits of alpha
@@ -255,8 +255,8 @@ impl Subtitle {
 
     /// Coordinates at which to display the subtitle.
     #[must_use]
-    pub fn coordinates(&self) -> &Coordinates {
-        &self.coordinates
+    pub fn area(&self) -> &Area {
+        &self.area
     }
 
     /// Map each of the 4 colors in this subtitle to a 4-bit palette.
@@ -282,8 +282,8 @@ impl Subtitle {
     /// Decompress to subtitle to an RBGA image.
     #[must_use]
     pub fn to_image(&self, palette: &Palette) -> RgbaImage {
-        let width = cast::u32(self.coordinates.width());
-        let height = cast::u32(self.coordinates.height());
+        let width = cast::u32(self.area.width());
+        let height = cast::u32(self.area.height());
         ImageBuffer::from_fn(width, height, |x, y| {
             let offset = cast::usize(y * width + x);
             // We need to subtract the raw index from 3 to get the same
@@ -304,7 +304,7 @@ impl fmt::Debug for Subtitle {
             .field("start_time", &self.start_time)
             .field("end_time", &self.end_time)
             .field("force", &self.force)
-            .field("coordinates", &self.coordinates)
+            .field("area", &self.area)
             .field("palette", &self.palette)
             .field("alpha", &self.alpha)
             .finish_non_exhaustive()
@@ -338,7 +338,7 @@ fn subtitle(raw_data: &[u8], base_time: f64) -> Result<Subtitle, SubError> {
     let mut start_time = None;
     let mut end_time = None;
     let mut force = false;
-    let mut coordinates = None;
+    let mut area = None;
     let mut palette = None;
     let mut alpha = None;
     let mut rle_offsets = None;
@@ -390,7 +390,7 @@ fn subtitle(raw_data: &[u8], base_time: f64) -> Result<Subtitle, SubError> {
                             if c.x2 <= c.x1 || c.y2 <= c.y1 {
                                 return Err(SubError::Parse("invalid bounding box".into()));
                             }
-                            coordinates = coordinates.or(Some(c));
+                            area = area.or(Some(c));
                         }
                         ControlCommand::RleOffsets(r) => {
                             rle_offsets = Some(r);
@@ -436,8 +436,7 @@ fn subtitle(raw_data: &[u8], base_time: f64) -> Result<Subtitle, SubError> {
     // Make sure we found all the control commands that we expect.
     let start_time =
         start_time.ok_or_else(|| SubError::Parse("no start time for subtitle".into()))?;
-    let coordinates =
-        coordinates.ok_or_else(|| SubError::Parse("no coordinates for subtitle".into()))?;
+    let area = area.ok_or_else(|| SubError::Parse("no area coordinates for subtitle".into()))?;
     let palette = palette.ok_or_else(|| SubError::Parse("no palette for subtitle".into()))?;
     let alpha = alpha.ok_or_else(|| SubError::Parse("no alpha for subtitle".into()))?;
     let rle_offsets =
@@ -463,7 +462,7 @@ fn subtitle(raw_data: &[u8], base_time: f64) -> Result<Subtitle, SubError> {
         return Err(SubError::Parse("invalid scan line offsets".into()));
     }
     let image = decompress(
-        coordinates.size(),
+        area.size(),
         [&raw_data[start_0..end], &raw_data[start_1..end]],
     )?;
 
@@ -472,7 +471,7 @@ fn subtitle(raw_data: &[u8], base_time: f64) -> Result<Subtitle, SubError> {
         start_time,
         end_time,
         force,
-        coordinates,
+        area,
         palette,
         alpha,
         raw_image: image,
@@ -667,7 +666,7 @@ mod tests {
                 ControlCommand::StartDate,
                 ControlCommand::Palette([0x0, 0x3, 0x1, 0x0]),
                 ControlCommand::Alpha([0xf, 0xf, 0xf, 0x0]),
-                ControlCommand::Coordinates(Coordinates {
+                ControlCommand::Coordinates(Area {
                     x1: 0x29b,
                     x2: 0x4e6,
                     y1: 0x3c5,
@@ -725,8 +724,8 @@ mod tests {
         assert!(sub1.end_time.unwrap() - 50.9 < 0.1);
         assert!(!sub1.force);
         assert_eq!(
-            sub1.coordinates,
-            Coordinates {
+            sub1.area,
+            Area {
                 x1: 750,
                 y1: 916,
                 x2: 1172,
