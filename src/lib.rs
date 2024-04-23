@@ -34,6 +34,7 @@
 
 pub mod content;
 mod errors;
+pub mod image;
 pub mod srt;
 pub mod time;
 mod util;

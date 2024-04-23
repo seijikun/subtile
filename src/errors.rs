@@ -10,4 +10,8 @@ pub enum SubError {
     /// Error with `VobSub`
     #[error("Error with VobSub")]
     VobSub(#[from] crate::vobsub::VobSubError),
+
+    /// Error during image dump
+    #[error("Dump images failed")]
+    ImageDump(#[from] crate::image::DumpError),
 }
