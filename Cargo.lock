@@ -259,7 +259,7 @@ checksum = "ef703b7cb59335eae2eb93ceb664c0eb7ea6bf567079d843e09420219668e072"
 
 [[package]]
 name = "subtile"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "cast",
  "env_logger",
