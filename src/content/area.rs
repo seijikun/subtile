@@ -1,7 +1,7 @@
 use super::{ContentError, Size};
 
 /// Location at which to display the subtitle.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AreaValues {
     /// min `x` coordinate value
     pub x1: u16,
@@ -14,7 +14,7 @@ pub struct AreaValues {
 }
 
 /// Location at which to display the subtitle.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Area(AreaValues);
 
 impl Area {
