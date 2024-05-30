@@ -23,3 +23,45 @@ impl Debug for TimeSpan {
         write!(f, "{} --> {}", self.start, self.end)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn time_span_creation() {
+        assert_eq!(
+            TimeSpan::new(TimePoint::from_msecs(0), TimePoint::from_secs(1.34)),
+            TimeSpan {
+                start: TimePoint::from_msecs(0),
+                end: TimePoint::from_secs(1.34)
+            }
+        );
+    }
+
+    #[test]
+    fn time_span_equality() {
+        let time_span_0_1 = TimeSpan::new(TimePoint::from_msecs(0), TimePoint::from_secs(1.34));
+        let time_span_1_2 = TimeSpan::new(TimePoint::from_msecs(1245), TimePoint::from_secs(2.34));
+        assert_eq!(
+            time_span_0_1,
+            TimeSpan::new(TimePoint::from_msecs(0), TimePoint::from_secs(1.34))
+        );
+        assert_eq!(
+            time_span_1_2,
+            TimeSpan {
+                start: TimePoint::from_msecs(1245),
+                end: TimePoint::from_secs(2.34)
+            }
+        );
+    }
+
+    #[test]
+    fn time_span_nequality() {
+        let time_span_0_1 = TimeSpan::new(TimePoint::from_msecs(0), TimePoint::from_secs(1.34));
+        let time_span_0_2 = TimeSpan::new(TimePoint::from_msecs(0), TimePoint::from_secs(2.34));
+        let time_span_1_2 = TimeSpan::new(TimePoint::from_msecs(1245), TimePoint::from_secs(2.34));
+        assert_ne!(time_span_0_1, time_span_0_2);
+        assert_ne!(time_span_0_2, time_span_1_2);
+    }
+}
