@@ -2,7 +2,7 @@ use core::fmt;
 use std::ops::Neg;
 
 /// Define a time in milliseconds
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TimePoint(i64);
 
 impl TimePoint {
@@ -10,6 +10,12 @@ impl TimePoint {
     #[must_use]
     pub const fn from_msecs(time: i64) -> Self {
         Self(time)
+    }
+
+    /// Create a `TimePoint` from seconds
+    #[must_use]
+    pub fn from_secs(seconds: f64) -> Self {
+        Self((seconds * 1000.0) as i64)
     }
 
     /// Convert to seconds
