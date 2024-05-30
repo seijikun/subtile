@@ -73,4 +73,32 @@ impl fmt::Display for TimePoint {
         )
     }
 }
-//TODO: add tests
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn time_point_creation() {
+        assert_eq!(TimePoint::from_msecs(6751), TimePoint(6751));
+        assert_eq!(TimePoint::from_msecs(142), TimePoint::from_secs(0.142));
+    }
+
+    #[test]
+    fn time_point_creation_with_too_mutch_decimals() {
+        assert_eq!(TimePoint::from_msecs(265), TimePoint::from_secs(0.265_579));
+        assert_eq!(TimePoint(142), TimePoint::from_secs(0.142_75));
+    }
+
+    #[test]
+    fn time_point_msecs() {
+        const TIME: i64 = 62487;
+        assert_eq!(TimePoint::from_msecs(TIME).msecs(), TIME);
+    }
+
+    #[test]
+    fn time_point_secs() {
+        const TIME: f64 = 624.87;
+        assert_eq!(TimePoint::from_secs(TIME).secs(), 624);
+    }
+}
