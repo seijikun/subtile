@@ -29,7 +29,7 @@ style = { priority = -1, level = "deny" }
 
 [dependencies]
 cast = "0.3"
-image = { version = "0.25", default-features = false }
+image = { version = "0.25", default-features = false, features = ["png"] }
 log = "0.4"
 nom = "7.1"
 once_cell = "1.19"
