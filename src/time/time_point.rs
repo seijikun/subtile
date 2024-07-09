@@ -107,4 +107,11 @@ mod tests {
         const TIME: f64 = 624.87;
         assert_eq!(TimePoint::from_secs(TIME).secs(), 624);
     }
+
+    #[test]
+    fn to_big_seconds() {
+        const TIME: f64 = 9_223_372_036_854_775.808; // i64::MAX + 1 as f64 / 1000
+        let result = std::panic::catch_unwind(|| TimePoint::from_secs(TIME));
+        assert!(result.is_err());
+    }
 }
