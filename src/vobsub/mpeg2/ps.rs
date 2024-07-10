@@ -146,13 +146,7 @@ impl<'a> Iterator for PesPackets<'a> {
                         }
                         // We got something that looked like a packet but
                         // wasn't parseable.  Log it and keep trying.
-                        nom::Err::Error(err) => {
-                            self.remaining = &self.remaining[needle.len()..];
-                            debug!("Skipping packet {:?}", &err);
-                        }
-                        // We got something that looked like a packet but
-                        // wasn't parseable.  Log it and keep trying.
-                        nom::Err::Failure(err) => {
+                        nom::Err::Error(err) | nom::Err::Failure(err) => {
                             self.remaining = &self.remaining[needle.len()..];
                             debug!("Skipping packet {:?}", &err);
                         }
