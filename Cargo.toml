@@ -19,6 +19,10 @@ maintenance = { status = "actively-developed" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lints.rust]
+missing_docs = "deny"
+unused_imports = "deny"
+
 [lints.clippy]
 cargo = { priority = -1, level = "warn" }
 complexity = { priority = -1, level = "deny" }
@@ -29,6 +33,26 @@ perf = { priority = -1, level = "deny" }
 # restriction  = { priority = -1, level = "deny" }
 style = { priority = -1, level = "deny" }
 # suspicious = { priority = -1, level = "deny" }
+bind_instead_of_map = "deny"
+borrowed_box = "deny"
+cast_lossless = "deny"
+clone_on_copy = "deny"
+derive_partial_eq_without_eq = "deny"
+doc_markdown = "deny"
+extra_unused_lifetimes = "deny"
+if_not_else = "deny"
+match_same_arms = "deny"
+missing_const_for_fn = "deny"
+missing_errors_doc = "deny"
+missing_fields_in_debug = "deny"
+missing_panics_doc = "deny"
+must_use_candidate = "deny"
+or_fun_call = "deny"
+trivially_copy_pass_by_ref = "deny"
+uninlined_format_args = "deny"
+use_self = "deny"
+unreadable_literal = "deny"
+useless_conversion = "deny"
 
 [dependencies]
 cast = "0.3"
