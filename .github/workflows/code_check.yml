@@ -25,9 +25,6 @@ jobs:
     name: Code Checks and Tests
 
     steps:
-      - name: "Install dependencies Ubuntu"
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends build-essential pkg-config
-
       - name: "Install rust-toolchain stable"
         uses: dtolnay/rust-toolchain@stable
         with:
