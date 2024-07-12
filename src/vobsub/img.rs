@@ -9,7 +9,6 @@ use nom::{
     sequence::{preceded, Tuple},
     IResult,
 };
-use safemem::write_bytes;
 use thiserror::Error;
 
 use super::IResultExt;
@@ -91,7 +90,7 @@ fn scan_line(input: &[u8], output: &mut [u8]) -> Result<usize, Error> {
                 output_size: output.len(),
             });
         }
-        write_bytes(&mut output[x..x + count], run.val);
+        output[x..x + count].fill(run.val);
         x += count;
     }
     if x > width {
