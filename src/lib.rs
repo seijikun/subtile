@@ -1,6 +1,16 @@
-//! This crate attempt to provide utilities to parse subtitles.
-//! Work is started from vobsub [crates.io](https://crates.io/crates/vobsub),
-//! [repository](https://github.com/emk/subtitles-rs) which no longer seems to be maintained.
+//! `subtile` is a Rust library which aims to propose a set of operations
+//! for working on subtitles. Example: parsing from and export in different formats,
+//! transform, adjust, correct, ...
+//!
+//! # Project
+//! ## start
+//! The project started with the fork of [vobsub](https://crates.io/crates/vobsub)
+//! crate which no longer seems to be maintained.
+//! Beyond the simple recovery, I want to take the opportunity to improve the code
+//! and extend the provided features.
+//!
+//! ## Name
+//! `Subtile` is a french word than fit well as contraction of Subtitles Utils.
 //!
 //! ## Contributing
 //!

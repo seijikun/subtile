@@ -14,6 +14,9 @@ categories = [
 ]
 license = "LGPL-3.0-or-later"
 
+[badges]
+maintenance = { status = "actively-developed" }
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lints.clippy]
