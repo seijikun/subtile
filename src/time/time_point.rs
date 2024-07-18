@@ -2,7 +2,7 @@ use core::fmt;
 use std::ops::Neg;
 
 /// Define a time in milliseconds
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TimePoint(i64);
 
 impl TimePoint {
