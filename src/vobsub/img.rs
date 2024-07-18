@@ -29,7 +29,7 @@ pub enum Error {
     #[error("Scan line is longer than image width: [{x},{width}]")]
     ScanLineLongerThanWidth { x: usize, width: usize },
 
-    /// Forward scan line parsind error.
+    /// Forward scan line parsing error.
     #[error("Parsing scan line failed")]
     ScanLineParsing(#[source] NomError),
 }

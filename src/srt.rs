@@ -3,7 +3,7 @@ use std::io;
 
 use crate::time::TimeSpan;
 
-/// Write subtitles in srt format
+/// Write subtitles in `srt` format
 /// # Errors
 ///
 /// Will return `Err` if write in `writer` return an `Err`.
@@ -19,7 +19,7 @@ pub fn write_srt(
     Ok(())
 }
 
-/// Write an subtitle line in Srt format
+/// Write an subtitle line in `srt` format
 fn write_srt_line(
     writer: &mut impl io::Write,
 ) -> impl FnMut((usize, &(TimeSpan, String))) -> Result<(), io::Error> + '_ {

@@ -142,7 +142,7 @@ pub enum VobSubError {
     #[error("PES packet parsing.")]
     PESPacket(#[source] NomError),
 
-    /// If the `control packet` is incmplete
+    /// If the `control packet` is incomplete
     #[error("Incomplete control packet")]
     IncompleteControlPacket,
 
@@ -183,11 +183,11 @@ pub enum NomError {
     #[error("Incomplete input: '{0:?}' needed.")]
     IncompleteInput(Needed),
 
-    /// An error happend during parsing
+    /// An Error occurred during parsing
     #[error("Error from nom : {0}")]
     Error(String),
 
-    /// And Failure happend during parsing
+    /// An Failure occurred during parsing
     #[error("Failure from nom : {0}")]
     Failure(String),
 }
@@ -196,12 +196,12 @@ pub enum NomError {
 pub trait IResultExt<I, O, E> {
     /// Convert an `IResult` to Result<_, `NomError`> and check than the buffer is empty after parsing.
     /// # Errors
-    /// Forward `Error` and `Failure` from nom, and return `UnexpectedInput` if the buffer is not empty after parsing.
+    /// Forward `Error` and `Failure` from `nom`, and return `UnexpectedInput` if the buffer is not empty after parsing.
     fn to_result_no_rest(self) -> Result<O, NomError>;
 
     /// Convert an `IResult` to Result<_, `NomError`>
     /// # Errors
-    /// Forward `Error` and `Failure` from nom.
+    /// Forward `Error` and `Failure` from `nom`.
     fn to_result(self) -> Result<(I, O), NomError>;
 }
 

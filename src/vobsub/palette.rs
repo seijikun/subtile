@@ -30,7 +30,7 @@ fn hex_rgb(input: &[u8]) -> IResult<&[u8], Rgb<u8>> {
     Ok((input, Rgb([red, green, blue])))
 }
 
-/// The 16-color pallette used by the subtitles.
+/// The 16-color palette used by the subtitles.
 pub type Palette = [Rgb<u8>; 16];
 
 /// Parse a text as Palette
