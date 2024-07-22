@@ -25,7 +25,7 @@ use crate::vobsub::{NomError, VobSubError};
 /// [MPEG-PS]: https://en.wikipedia.org/wiki/MPEG_program_stream
 #[derive(Debug, PartialEq, Eq)]
 pub struct Header {
-    /// The System Clock Reference (SCR) and SCR extension field.
+    /// The System Clock Reference (`SCR`) and `SCR` extension field.
     pub scr: Clock,
     /// The bit rate, in units of 50 bytes per second.
     pub bit_rate: u32,
@@ -93,7 +93,7 @@ pub struct PesPacket<'a> {
     pub pes_packet: pes::Packet<'a>,
 }
 
-/// Parse a Program Stream packet and the following PES packet.
+/// Parse a Program Stream packet and the following `PES` packet.
 pub fn pes_packet(input: &[u8]) -> IResult<&[u8], PesPacket> {
     let (input, (ps_header, pes_packet)) = (header, pes::packet).parse(input)?;
     Ok((
@@ -105,7 +105,7 @@ pub fn pes_packet(input: &[u8]) -> IResult<&[u8], PesPacket> {
     ))
 }
 
-/// An iterator over all the PES packets in an MPEG-2 Program Stream.
+/// An iterator over all the `PES` packets in an MPEG-2 Program Stream.
 pub struct PesPackets<'a> {
     /// The remaining input to parse.
     remaining: &'a [u8],
@@ -162,7 +162,7 @@ impl<'a> Iterator for PesPackets<'a> {
     }
 }
 
-/// Iterate over all the PES packets in an MPEG-2 Program Stream (or at
+/// Iterate over all the `PES` packets in an MPEG-2 Program Stream (or at
 /// least those which contain subtitles).
 pub const fn pes_packets(input: &[u8]) -> PesPackets {
     PesPackets { remaining: input }

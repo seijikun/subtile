@@ -4,13 +4,13 @@
 //!
 //! # Project
 //! ## start
-//! The project started with the fork of [vobsub](https://crates.io/crates/vobsub)
+//! The project started with the fork of [`vobsub`](https://crates.io/crates/vobsub)
 //! crate which no longer seems to be maintained.
 //! Beyond the simple recovery, I want to take the opportunity to improve the code
 //! and extend the provided features.
 //!
 //! ## Name
-//! `Subtile` is a french word than fit well as contraction of Subtitles Utils.
+//! `Subtile` is a french word than fit well as contraction of `Subtitles Utils`.
 //!
 //! ## Contributing
 //!

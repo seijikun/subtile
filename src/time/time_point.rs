@@ -17,7 +17,7 @@ impl TimePoint {
     /// # Panics
     ///
     /// Will panics if the `seconds` value fill as parameter is to big to be store as
-    /// millisecond in a i64.
+    /// millisecond in a [`i64`].
     #[must_use]
     pub fn from_secs(seconds: f64) -> Self {
         let msecs = cast::i64(seconds * 1000.0).unwrap();

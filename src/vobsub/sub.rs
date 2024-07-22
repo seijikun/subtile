@@ -342,7 +342,7 @@ impl<'a, Decoder> VobsubParser<'a, Decoder> {
     fn next_sub_packet(&mut self) -> Option<Result<(f64, Vec<u8>), VobSubError>> {
         profiling::scope!("VobsubParser next_sub_packet");
 
-        // Get the PES packet containing the first chunk of our subtitle.
+        // Get the `PES` packet containing the first chunk of our subtitle.
         let first: ps::PesPacket = try_iter!(self.pes_packets.next());
 
         // Fetch useful information from our first packet.
@@ -354,7 +354,7 @@ impl<'a, Decoder> VobsubParser<'a, Decoder> {
         let substream_id = first.pes_packet.substream_id;
 
         // Figure out how many total bytes we'll need to collect from one
-        // or more PES packets, and collect the first chunk into a buffer.
+        // or more `PES` packets, and collect the first chunk into a buffer.
         if first.pes_packet.data.len() < 2 {
             return Some(Err(VobSubError::PacketTooShort));
         }

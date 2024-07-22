@@ -1,4 +1,4 @@
-//! # MPEG-2 Packetized Elementary Streams (PES)
+//! # MPEG-2 Packetized Elementary Streams (`PES`)
 //!
 //! These packets are nested inside the MPEG-2 Program Stream packets found
 //! in a `*.sub` file.
@@ -20,10 +20,10 @@ use std::fmt;
 use super::clock::{clock, Clock};
 use crate::util::BytesFormatter;
 
-/// Possible combinations of PTS and DTS data which might appear inside a
-/// PES header.
+/// Possible combinations of `PTS` and `DTS` data which might appear inside a
+/// `PES` header.
 ///
-/// See the [PES header documentation][PES] for details.
+/// See the [`PES` header documentation][PES] for details.
 ///
 /// [PES]: http://dvd.sourceforge.net/dvdinfo/pes-hdr.html
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -37,7 +37,7 @@ pub enum PtsDtsFlags {
     PtsDts,
 }
 
-/// Parse PTS & DTS flags in a PES packet header.  Consumes two bits.
+/// Parse `PTS` & `DTS` flags in a `PES` packet header.  Consumes two bits.
 fn pts_dts_flags(input: (&[u8], usize)) -> IResult<(&[u8], usize), PtsDtsFlags> {
     alt((
         value(PtsDtsFlags::None, tag_bits(0b00, 2u8)),
@@ -64,7 +64,7 @@ fn pts_only(input: &[u8]) -> IResult<&[u8], PtsDts> {
     })(input)
 }
 
-/// Helper for `pts_dts`.  Parses the PTS and DTS case.
+/// Helper for `pts_dts`.  Parses the `PTS` and `DTS` case.
 fn pts_and_dts(input: &[u8]) -> IResult<&[u8], PtsDts> {
     bits(|input| {
         let parse_tag = tag_bits(0b0010, 4u8);
@@ -153,7 +153,7 @@ pub struct HeaderData {
     pub pts_dts: Option<PtsDts>,
 }
 
-/// Parse PES header data, including the preceding flags and length bytes.
+/// Parse `PES` header data, including the preceding flags and length bytes.
 fn header_data(input: &[u8]) -> IResult<&[u8], HeaderData> {
     // Grab the flags from our flag byte with header_data_flags.
     let (input, flags) = header_data_flags(input)?;
@@ -179,7 +179,7 @@ pub struct Header {
     pub original: bool,
 }
 
-/// Parse the first PES header byte after the length.
+/// Parse the first `PES` header byte after the length.
 fn header(input: &[u8]) -> IResult<&[u8], Header> {
     bits(|input| {
         let tag_parse = tag_bits(0b10, 2u8);
