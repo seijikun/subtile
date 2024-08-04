@@ -1,6 +1,8 @@
 //! Module for `Image` manipulation.
+mod pixels;
 mod utils;
 
+pub use pixels::{luma_a_to_luma, luma_a_to_luma_convertor};
 pub use utils::{dump_images, DumpError};
 
 use crate::content::Area;
