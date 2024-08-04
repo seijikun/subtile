@@ -13,6 +13,7 @@ categories = [
     "parser-implementations",
 ]
 license = "LGPL-3.0-or-later"
+rust-version = "1.80"
 
 [badges]
 maintenance = { status = "actively-developed" }
