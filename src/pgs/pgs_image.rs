@@ -1,6 +1,6 @@
 use super::pds::{Palette, PaletteEntry};
-use crate::image::ImageSize;
-use image::{LumaA, Pixel, Primitive};
+use crate::image::{ImageSize, ToImage};
+use image::{ImageBuffer, LumaA, Pixel, Primitive};
 use std::io::{ErrorKind, Read};
 
 /// Define a type of `fn` who covert pixel from `PaletteEntry` to a target color type.
@@ -82,6 +82,55 @@ fn pe_to_luma_a<P: Primitive>(input: &PaletteEntry) -> LumaA<P> {
     let luminance = P::from(input.luminance).unwrap();
     let alpha = P::from(input.transparency).unwrap();
     LumaA([luminance, alpha])
+}
+
+/// This struct implement [`ToImage`] to generate an `ImageBuffer` from
+/// a [`RleEncodedImage`] and a pixel conversion function.
+pub struct RleToImage<'a, P, C>
+where
+    P: Pixel<Subpixel = u8>,
+    C: Fn(LumaA<u8>) -> P,
+{
+    rle_image: &'a RleEncodedImage,
+    conv_fn: C,
+}
+
+impl<'a, P, C> RleToImage<'a, P, C>
+where
+    P: Pixel<Subpixel = u8>,
+    C: Fn(LumaA<u8>) -> P,
+{
+    /// Create a struct to generate an image from [`RleEncodedImage`]
+    pub const fn new(rle_image: &'a RleEncodedImage, conv_fn: C) -> Self {
+        Self { rle_image, conv_fn }
+    }
+}
+
+impl<P, C> ToImage for RleToImage<'_, P, C>
+where
+    P: Pixel<Subpixel = u8>,
+    C: Fn(LumaA<u8>) -> P,
+{
+    type Pixel = P;
+
+    #[profiling::function]
+    fn to_image(&self) -> ImageBuffer<P, Vec<u8>>
+    where
+        P: Pixel<Subpixel = u8>,
+    {
+        let width = self.rle_image.width();
+        let height = self.rle_image.height();
+        let pixel_iter = self.rle_image.into_iter();
+
+        let buf_size = (width * height) as usize * P::CHANNEL_COUNT as usize;
+        let mut buf = Vec::with_capacity(buf_size);
+        pixel_iter
+            .map(|p| (self.conv_fn)(p))
+            .for_each(|p| buf.extend_from_slice(p.channels()));
+
+        ImageBuffer::<P, Vec<u8>>::from_vec(width, height, buf)
+            .expect("Failed to create image buffer")
+    }
 }
 
 /// struct to iterate on pixel of an `Rle` image.
