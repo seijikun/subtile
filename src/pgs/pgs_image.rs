@@ -1,6 +1,6 @@
 use super::pds::{Palette, PaletteEntry};
-use crate::image::{ImageSize, ToImage};
-use image::{ImageBuffer, LumaA, Pixel, Primitive};
+use crate::image::{ImageSize, ToImage, ToOcrImage, ToOcrImageOpt};
+use image::{ImageBuffer, Luma, LumaA, Pixel, Primitive};
 use std::io::{ErrorKind, Read};
 
 /// Define a type of `fn` who covert pixel from `PaletteEntry` to a target color type.
@@ -130,6 +130,31 @@ where
 
         ImageBuffer::<P, Vec<u8>>::from_vec(width, height, buf)
             .expect("Failed to create image buffer")
+    }
+}
+
+/// Implement [`ToOcrImage`] from [`RleEncodedImage`]
+impl<C> ToOcrImage for RleToImage<'_, Luma<u8>, C>
+where
+    C: Fn(LumaA<u8>) -> Luma<u8>,
+{
+    #[profiling::function]
+    fn image(&self, opt: &ToOcrImageOpt) -> image::GrayImage {
+        let width = self.rle_image.width();
+        let height = self.rle_image.height();
+        let border = opt.border;
+
+        let raw_pixels = self.rle_image.into_iter().collect::<Vec<_>>();
+
+        ImageBuffer::from_fn(width + border * 2, height + border * 2, |x, y| {
+            if x < border || x >= width + border || y < border || y >= height + border {
+                opt.background_color
+            } else {
+                let offset = (y - border) * width + (x - border);
+                let pixel = raw_pixels[offset as usize];
+                (self.conv_fn)(pixel)
+            }
+        })
     }
 }
 
