@@ -1,4 +1,5 @@
 use image::{Luma, LumaA, Primitive};
+use std::borrow::Borrow;
 
 /// Pixel convert function to remove alpha.
 /// Convert from [`LumaA`] to [`Luma`], and are useful to prepare image for `ocr`.
@@ -11,10 +12,12 @@ use image::{Luma, LumaA, Primitive};
 ///
 /// # Panics
 /// Will panic if `P`(Primitive) is not initializable from value `L` and `A`.
-pub fn luma_a_to_luma<P, const A: u8, const L: u8>(luma: &LumaA<P>) -> Luma<P>
+pub fn luma_a_to_luma<In, P, const A: u8, const L: u8>(luma: In) -> Luma<P>
 where
+    In: Borrow<LumaA<P>>,
     P: Primitive,
 {
+    let luma = luma.borrow();
     let luminance = luma[0]; //0 : Luminance idx
     let alpha = luma[1]; //1 : Alpha idx
 
@@ -32,11 +35,13 @@ where
 ///
 /// * `alpha_t`: alpha threshold
 /// * `luma_t`: luma threshold
-pub fn luma_a_to_luma_convertor<P>(alpha_t: P, luma_t: P) -> impl Fn(&LumaA<P>) -> Luma<P>
+pub fn luma_a_to_luma_convertor<P, In>(alpha_t: P, luma_t: P) -> impl Fn(In) -> Luma<P>
 where
     P: Primitive,
+    In: Borrow<LumaA<P>>,
 {
     move |luma| {
+        let luma = luma.borrow();
         let luminance = luma[0]; //0 : Luminance idx
         let alpha = luma[1]; //1 : Alpha idx
         if alpha >= alpha_t && luminance >= luma_t {
