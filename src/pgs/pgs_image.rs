@@ -1,6 +1,6 @@
 use super::pds::Palette;
 use crate::image::ImageSize;
-use std::io::Read;
+use std::io::{ErrorKind, Read};
 
 /// Store Image data directly from `PGS`.
 #[derive(Clone)]
@@ -81,7 +81,12 @@ impl RlePixelIterator<'_> {
         const COLOR_0: u8 = 0;
         loop {
             let mut color: [u8; 1] = [0; 1];
-            self.raw_data.read_exact(&mut color).unwrap();
+            let res = self.raw_data.read_exact(&mut color);
+            if let Err(err) = res {
+                if err.kind() == ErrorKind::UnexpectedEof {
+                    return None;
+                }
+            }
 
             let next = color[0];
             if next == MARKER {
