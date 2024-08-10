@@ -28,6 +28,21 @@ impl RleEncodedImage {
             raw,
         }
     }
+
+    /// Iterate on image pixels converted with a specified function.
+    pub fn pixels<D: Primitive>(
+        &self,
+        convert: PixelConversion<LumaA<D>>,
+    ) -> RlePixelIterator<LumaA<D>> {
+        RlePixelIterator {
+            rle_image: self,
+            raw_data: &self.raw,
+            current_color: LumaA([D::DEFAULT_MIN_VALUE, D::DEFAULT_MAX_VALUE]),
+            default_color: LumaA([D::DEFAULT_MAX_VALUE, D::DEFAULT_MIN_VALUE]), // Default: white + transparent
+            nb_remaining_pixels: 0,
+            convert,
+        }
+    }
 }
 
 impl ImageSize for RleEncodedImage {
