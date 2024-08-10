@@ -1,6 +1,10 @@
-use super::pds::Palette;
+use super::pds::{Palette, PaletteEntry};
 use crate::image::ImageSize;
+use image::{LumaA, Pixel, Primitive};
 use std::io::{ErrorKind, Read};
+
+/// Define a type of `fn` who covert pixel from `PaletteEntry` to a target color type.
+type PixelConversion<TargetColor> = fn(&PaletteEntry) -> TargetColor;
 
 /// Store Image data directly from `PGS`.
 #[derive(Clone)]
@@ -37,34 +41,64 @@ impl ImageSize for RleEncodedImage {
 
 /// Create an iterator over [`RleEncodedImage`] pixels.
 impl<'a> IntoIterator for &'a RleEncodedImage {
-    type Item = u8;
-    type IntoIter = RlePixelIterator<'a>;
+    type Item = LumaA<u8>;
+    type IntoIter = RlePixelIterator<'a, LumaA<u8>>;
 
     fn into_iter(self) -> Self::IntoIter {
         RlePixelIterator {
+            rle_image: self,
             raw_data: &self.raw,
-            current_color: 0,
+            current_color: LumaA([
+                <u8 as Primitive>::DEFAULT_MIN_VALUE,
+                <u8 as Primitive>::DEFAULT_MAX_VALUE,
+            ]), // setup to luma min (black), alpha max (opaque)
+            default_color: LumaA([
+                <u8 as Primitive>::DEFAULT_MAX_VALUE,
+                <u8 as Primitive>::DEFAULT_MIN_VALUE,
+            ]), // Default: white + transparent
             nb_remaining_pixels: 0,
+            convert: pe_to_luma_a,
         }
     }
 }
 
+/// Convert a [`PaletteEntry`] to a `LumaA`<P>
+fn pe_to_luma_a<P: Primitive>(input: &PaletteEntry) -> LumaA<P> {
+    let luminance = P::from(input.luminance).unwrap();
+    let alpha = P::from(input.transparency).unwrap();
+    LumaA([luminance, alpha])
+}
+
 /// struct to iterate on pixel of an `Rle` image.
-pub struct RlePixelIterator<'a> {
+pub struct RlePixelIterator<'a, C> {
+    rle_image: &'a RleEncodedImage,
     raw_data: &'a [u8],
-    current_color: u8,
+    current_color: C,
+    default_color: C,
     nb_remaining_pixels: u16,
+    convert: PixelConversion<C>,
 }
 
 /// Allow iterate over pixels of image encoded in `Rle`.
-impl Iterator for RlePixelIterator<'_> {
-    type Item = u8; // PaletteIdx
+impl<Pix, Sub> Iterator for RlePixelIterator<'_, Pix>
+where
+    Sub: Primitive,
+    Pix: Copy + Pixel<Subpixel = Sub>,
+{
+    type Item = Pix;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.nb_remaining_pixels > 0 {
             self.nb_remaining_pixels -= 1;
             Some(self.current_color)
-        } else if let Some((color, nb_pixel)) = self.read_next_pixel() {
+        } else if let Some((color_id, nb_pixel)) = self.read_next_pixel() {
+            let color = if let Some(color) = self.rle_image.palette.get(color_id) {
+                (self.convert)(color)
+            } else {
+                // If color_id is not present in palette, return default value
+                self.default_color
+            };
+
             self.current_color = color;
             self.nb_remaining_pixels = nb_pixel - 1;
             Some(self.current_color)
@@ -74,7 +108,7 @@ impl Iterator for RlePixelIterator<'_> {
     }
 }
 
-impl RlePixelIterator<'_> {
+impl<C> RlePixelIterator<'_, C> {
     /// Read next pixel info(color and number of instance).
     fn read_next_pixel(&mut self) -> Option<(u8 /*color */, u16 /*nb_pixels*/)> {
         const MARKER: u8 = 0;
