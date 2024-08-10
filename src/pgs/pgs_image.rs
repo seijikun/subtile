@@ -121,6 +121,18 @@ where
             None // End of pixels
         }
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let nb_pixels = (self.rle_image.width() * self.rle_image.height()) as usize;
+        (nb_pixels, Some(nb_pixels))
+    }
+}
+
+impl<Pix, Sub> ExactSizeIterator for RlePixelIterator<'_, Pix>
+where
+    Sub: Primitive,
+    Pix: Copy + Pixel<Subpixel = Sub>,
+{
 }
 
 impl<C> RlePixelIterator<'_, C> {
