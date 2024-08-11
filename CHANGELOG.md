@@ -6,6 +6,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/gwen-lg/subtile/compare/v0.2.0...v0.3.0) - 2024-08-11
+
+### Added
+- *(pgs)* implement ToOcrImage for RleIndexedImage
+- *(pgs)* Add implementation of ToImage for pgs image
+- feat(): use `Borrow` for more generic pixel convert functions
+- *(image)* add pixel convert functions
+- *(pgs)* add size_hint implementation for SupParser
+- *(pgs)* add size_hint and implement ExactSizeIterator
+- *(pgs)* add pixels method on RleEncodedImage
+- *(pgs)* add pixel color convertion with genericity
+- *(pgs)* manage unexpected eof error in read_next_pixel
+- *(pgs)* add decoding of Rle PGS image
+- *(pgs)* set Palette in RleEncodedImage
+- *(pgs)* handle custom offset in Palette for PaletteEntries
+- *(pgs)* Add Palette struct to better handle PaletteEntries
+- *(pgs)* add PaletteDefinitionSegment parsing.
+- *(pgs)* add RleEncodedImage & impl SubtitleImage
+- *(pgs)* add ODS parsing
+- *(pgs)* add u24 type
+- *(pgs)* add DecoderTimeImage
+- *(pgs)* add segment header parsing
+- *(pgs)* add ReadExt extension trait.
+- *(pgs)* add SegmentTypeCode struct
+- *(pgs)* add blank implementation of Iterator for SupParser
+- *(pgs)* add from_file on SupParser
+- *(pgs)* add PgsDecoder trait for use by SupParser
+- *(pgs)* create SupParser struct
+- *(typos)* add .typos.toml conf
+
+### Fixed
+- *(typos)* fix somes typos in doc, func name and data files
+
+### Other
+- add 'pgs' as keyword for crate
+- *(pgs)* [**breaking**] use `seek_relative` to avoid buffer discard
+- cargo update
+- *(cargo)* move dependencies before lints setup
+- *(error)* add error and panic documentation
+- *(typos)* add `typos` step in code_check ci workflow
+- *(github)* fix typo in job name of code_check.yml
+- add space between `90` and `kHz`
+- use word image instead of img
+- fix link to VobsubParser struct
+- add backticks for specifics some term
+
 ## [0.2.0](https://github.com/gwen-lg/subtile/compare/v0.1.9...v0.2.0) - 2024-07-18
 
 ### Added
