@@ -95,7 +95,7 @@ impl PgsDecoder for DecodeTimeImage {
                     let seg_size = header.size() as usize;
                     let ods = ods::read(reader, seg_size)?;
 
-                    let palette = palette.take().ok_or_else(|| PgsError::MissingPalette)?;
+                    let palette = palette.take().ok_or(PgsError::MissingPalette)?;
                     image = Some(RleEncodedImage::new(
                         ods.width,
                         ods.height,
@@ -109,7 +109,7 @@ impl PgsDecoder for DecodeTimeImage {
                     if let Some(start_time) = start_time {
                         let times = TimeSpan::new(start_time, time);
 
-                        let image = image.take().ok_or_else(|| PgsError::MissingImage)?;
+                        let image = image.take().ok_or(PgsError::MissingImage)?;
                         subtitle = Some((times, image));
                     } else {
                         start_time = Some(time);
