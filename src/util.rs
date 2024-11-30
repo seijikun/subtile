@@ -6,7 +6,7 @@ use std::fmt;
 /// bytes with only the the first line or so of bytes shown.
 pub struct BytesFormatter<'a>(pub &'a [u8]);
 
-impl<'a> fmt::Debug for BytesFormatter<'a> {
+impl fmt::Debug for BytesFormatter<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let BytesFormatter(bytes) = *self;
         for byte in bytes.iter().take(16) {

@@ -220,7 +220,7 @@ pub struct Packet<'a> {
     pub data: &'a [u8],
 }
 
-impl<'a> fmt::Debug for Packet<'a> {
+impl fmt::Debug for Packet<'_> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fmt.debug_struct("Packet")
             .field("header", &self.header)

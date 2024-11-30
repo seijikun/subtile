@@ -396,7 +396,7 @@ impl<'a, Decoder> VobsubParser<'a, Decoder> {
     }
 }
 
-impl<'a, D> Iterator for VobsubParser<'a, D> {
+impl<D> Iterator for VobsubParser<'_, D> {
     type Item = Result<(TimeSpan, VobSubIndexedImage), VobSubError>;
 
     fn next(&mut self) -> Option<Self::Item> {
