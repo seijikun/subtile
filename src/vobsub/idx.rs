@@ -22,6 +22,8 @@ pub struct Index {
     sub_data: Vec<u8>,
 }
 
+const PALETTE_KEY: &str = "palette";
+
 impl Index {
     /// Open an `*.idx` file and the associated `*.sub` file.
     ///
@@ -100,7 +102,7 @@ where
             let key = cap.get(1).unwrap().as_str();
             let val = cap.get(2).unwrap().as_str();
             match key {
-                "palette" => {
+                PALETTE_KEY => {
                     palette_val = Some(
                         palette(val.as_bytes())
                             .to_result_no_rest()
@@ -113,7 +115,7 @@ where
         buf.clear();
     }
 
-    let palette = palette_val.ok_or(VobSubError::MissingKey("palette"))?;
+    let palette = palette_val.ok_or(VobSubError::MissingKey(PALETTE_KEY))?;
     Ok(palette)
 }
 
