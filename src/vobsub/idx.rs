@@ -126,8 +126,7 @@ where
         buf.clear();
     }
 
-    let palette = palette_val.ok_or(VobSubError::MissingKey(PALETTE_KEY))?;
-    Ok(palette)
+    palette_val.ok_or(VobSubError::MissingKey(PALETTE_KEY))
 }
 
 #[cfg(test)]
