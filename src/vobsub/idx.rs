@@ -9,7 +9,12 @@ use std::{
     path::Path,
 };
 
-use super::{palette, sub, IResultExt, Palette, VobSubError};
+use crate::vobsub::IResultExt;
+
+use super::{
+    palette::{palette, DEFAULT_PALETTE},
+    sub, Palette, VobSubError,
+};
 
 /// A `*.idx` file describing the subtitles in a `*.sub` file.
 #[derive(Debug)]
@@ -39,7 +44,13 @@ impl Index {
 
         let f = fs::File::open(path).map_err(mkerr_idx)?;
         let input = io::BufReader::new(f);
-        let palette = read_palette(input, &mkerr_idx)?;
+        let palette = read_palette(input, &mkerr_idx).or_else(|err| {
+            if let VobSubError::MissingKey(PALETTE_KEY) = err {
+                Ok(DEFAULT_PALETTE)
+            } else {
+                Err(err)
+            }
+        })?;
 
         let mut sub_path = path.to_owned();
         sub_path.set_extension("sub");
