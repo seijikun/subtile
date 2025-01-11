@@ -62,3 +62,29 @@ where
         (500, None)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::SupParser;
+    use crate::{
+        pgs::DecodeTimeOnly,
+        time::{TimePoint, TimeSpan},
+    };
+    use std::{fs::File, io::BufReader};
+
+    #[test]
+    fn parse_only_one_sub() {
+        let controls = [TimeSpan::new(
+            TimePoint::from_msecs(500),
+            TimePoint::from_msecs(1499),
+        )];
+
+        let parser =
+            SupParser::<BufReader<File>, DecodeTimeOnly>::from_file("./fixtures/only_one.sup")
+                .unwrap();
+
+        let file_subtitles = parser.map(|sub| sub.unwrap()).collect::<Vec<_>>();
+        assert!(file_subtitles.iter().eq(controls.iter()));
+        assert!(file_subtitles.len() == 1);
+    }
+}
