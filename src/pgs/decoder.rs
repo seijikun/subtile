@@ -54,7 +54,8 @@ impl PgsDecoder for DecodeTimeOnly {
                     }
                 }
                 _ => {
-                    // Not managed for now
+                    // Segment content are not taken into account, skipped
+                    skip_segment(reader, &seg_header)?;
                 }
             }
         }
