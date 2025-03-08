@@ -29,6 +29,7 @@ use nom::{
 };
 use std::{
     cmp::Ordering, fmt::Debug, fs, io::Read, iter::FusedIterator, marker::PhantomData, path::Path,
+    slice::from_ref,
 };
 use thiserror::Error;
 
@@ -94,39 +95,126 @@ enum ControlCommand<'a> {
     Unsupported(&'a [u8]),
 }
 
+// Defines the list of `CommandControl` tags with associated values.
+#[repr(u8)]
+#[derive(Debug, PartialEq, Eq)]
+enum ControlCommandTag {
+    Force = 0x00,
+    StartDate = 0x01,
+    StopDate = 0x02,
+    Palette = 0x03,
+    Alpha = 0x04,
+    Coordinates = 0x05,
+    RleOffsets = 0x06,
+    End = 0xff,
+}
+
+impl ControlCommandTag {
+    // Create a ref static to a slice with the associated value.
+    const fn as_slice(&self) -> &'static [u8] {
+        let value = self.as_static_ref();
+        from_ref(value)
+    }
+
+    // Return ref static on the associated value.
+    const fn as_static_ref(&self) -> &'static u8 {
+        match self {
+            Self::Force => {
+                const FORCE: u8 = ControlCommandTag::Force as u8;
+                &FORCE
+            }
+            Self::StartDate => {
+                const START_DATE: u8 = ControlCommandTag::StartDate as u8;
+                &START_DATE
+            }
+            Self::StopDate => {
+                const STOP_DATE: u8 = ControlCommandTag::StopDate as u8;
+                &STOP_DATE
+            }
+            Self::Palette => {
+                const PALETTE: u8 = ControlCommandTag::Palette as u8;
+                &PALETTE
+            }
+            Self::Alpha => {
+                const ALPHA: u8 = ControlCommandTag::Alpha as u8;
+                &ALPHA
+            }
+            Self::Coordinates => {
+                const COORDINATES: u8 = ControlCommandTag::Coordinates as u8;
+                &COORDINATES
+            }
+            Self::RleOffsets => {
+                const RLE_OFFSETS: u8 = ControlCommandTag::RleOffsets as u8;
+                &RLE_OFFSETS
+            }
+            Self::End => {
+                const END: u8 = ControlCommandTag::End as u8;
+                &END
+            }
+        }
+    }
+}
+
+impl From<ControlCommandTag> for u8 {
+    fn from(value: ControlCommandTag) -> Self {
+        value as Self
+    }
+}
+
 /// Parse a single command in a control sequence.
 fn control_command(input: &[u8]) -> IResult<&[u8], ControlCommand> {
     alt((
-        value(ControlCommand::Force, tag_bytes(&[0x00])),
-        value(ControlCommand::StartDate, tag_bytes(&[0x01])),
-        value(ControlCommand::StopDate, tag_bytes(&[0x02])),
+        value(
+            ControlCommand::Force,
+            tag_bytes(ControlCommandTag::Force.as_slice()),
+        ),
+        value(
+            ControlCommand::StartDate,
+            tag_bytes(ControlCommandTag::StartDate.as_slice()),
+        ),
+        value(
+            ControlCommand::StopDate,
+            tag_bytes(ControlCommandTag::StopDate.as_slice()),
+        ),
         map(
-            preceded(tag_bytes(&[0x03]), palette_entries),
+            preceded(
+                tag_bytes(ControlCommandTag::Palette.as_slice()),
+                palette_entries,
+            ),
             ControlCommand::Palette,
         ),
         map(
-            preceded(tag_bytes(&[0x04]), palette_entries),
+            preceded(
+                tag_bytes(ControlCommandTag::Alpha.as_slice()),
+                palette_entries,
+            ),
             ControlCommand::Alpha,
         ),
         map(
-            preceded(tag_bytes(&[0x05]), area),
+            preceded(tag_bytes(ControlCommandTag::Coordinates.as_slice()), area),
             ControlCommand::Coordinates,
         ),
         map(
-            preceded(tag_bytes(&[0x06]), rle_offsets),
+            preceded(
+                tag_bytes(ControlCommandTag::RleOffsets.as_slice()),
+                rle_offsets,
+            ),
             ControlCommand::RleOffsets,
         ),
         // We only capture this so we have something to log.  Note that we
         // may not find the _true_ `ControlCommand::End` in this case, but
         // that doesn't matter, because we'll use the `next` field of
         // `ControlSequence` to find the next `ControlSequence`.
-        map(take_until(&[0xff][..]), ControlCommand::Unsupported),
+        map(
+            take_until(ControlCommandTag::End.as_slice()),
+            ControlCommand::Unsupported,
+        ),
     ))(input)
 }
 
 /// The end of a control sequence.
 fn control_command_end(input: &[u8]) -> IResult<&[u8], &[u8]> {
-    bytes::complete::tag(&[0xff])(input)
+    bytes::complete::tag(ControlCommandTag::End.as_slice())(input)
 }
 
 /// The control packet for a subtitle.
