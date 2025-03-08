@@ -23,8 +23,8 @@ use nom::{
     combinator::{map, value},
     multi::{count, many_till},
     number::complete::be_u16,
-    sequence::{preceded, Tuple},
-    IResult,
+    sequence::preceded,
+    IResult, Parser,
 };
 use std::{
     cmp::Ordering, fmt::Debug, fs, io::Read, iter::FusedIterator, marker::PhantomData, path::Path,
@@ -208,12 +208,13 @@ fn control_command(input: &[u8]) -> IResult<&[u8], ControlCommand> {
             take_until(ControlCommandTag::End.as_slice()),
             ControlCommand::Unsupported,
         ),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 /// The end of a control sequence.
 fn control_command_end(input: &[u8]) -> IResult<&[u8], &[u8]> {
-    tag_bytes(ControlCommandTag::End.as_slice())(input)
+    tag_bytes(ControlCommandTag::End.as_slice()).parse(input)
 }
 
 /// The control packet for a subtitle.
