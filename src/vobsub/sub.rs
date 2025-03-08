@@ -19,7 +19,6 @@ use log::{trace, warn};
 use nom::{
     bits::{bits, complete::take as take_bits},
     branch::alt,
-    bytes,
     bytes::complete::{tag as tag_bytes, take_until},
     combinator::{map, value},
     multi::{count, many_till},
@@ -214,7 +213,7 @@ fn control_command(input: &[u8]) -> IResult<&[u8], ControlCommand> {
 
 /// The end of a control sequence.
 fn control_command_end(input: &[u8]) -> IResult<&[u8], &[u8]> {
-    bytes::complete::tag(ControlCommandTag::End.as_slice())(input)
+    tag_bytes(ControlCommandTag::End.as_slice())(input)
 }
 
 /// The control packet for a subtitle.
