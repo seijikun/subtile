@@ -60,6 +60,14 @@ jobs:
         run: |
           cargo fmt --all -- --check
 
+      - name: "Cargo.toml format"
+        id: cargo_toml_fmt
+        if: $${{ always() }}
+        uses: gwen-lg/taplo-action@v1
+        with:
+          format: true
+          lint: false
+
       - name: Check if readme is up to date
         id: cargo_readme
         if: $${{ always() }}
