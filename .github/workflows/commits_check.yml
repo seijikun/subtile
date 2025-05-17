@@ -63,10 +63,12 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4
 
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: "true" # useful for don't rebuild cargo-readme and dependencies on fix after failure
+
       - name: Install cargo-readme
         run: cargo install cargo-readme
-
-      - uses: Swatinem/rust-cache@v2
 
       - name: Check spelling of entire workspace
         id: typos_check
