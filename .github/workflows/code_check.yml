@@ -61,12 +61,20 @@ jobs:
           cargo fmt --all -- --check
 
       - name: "Cargo.toml format"
-        id: cargo_toml_fmt
+        id: toml_fmt
         if: $${{ always() }}
         uses: gwen-lg/taplo-action@v1
         with:
           format: true
           lint: false
+
+      - name: "Cargo.toml lint"
+        id: toml_lint
+        if: $${{ always() }}
+        uses: gwen-lg/taplo-action@v1
+        with:
+          format: false
+          lint: true
 
       - name: Check if readme is up to date
         id: cargo_readme
@@ -99,6 +107,8 @@ jobs:
           echo "|---|------|" >> $GITHUB_STEP_SUMMARY
           echo "|typos|${{ steps.typos_check.outcome}}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo fmt|${{ steps.cargo_fmt.outcome }}|" >> $GITHUB_STEP_SUMMARY
+          echo "|Taplo fmt|${{ steps.toml_fmt.outcome }}|" >> $GITHUB_STEP_SUMMARY
+          echo "|Taplo lint|${{ steps.toml_lint.outcome }}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo readme|${{ steps.cargo_readme.outcome }}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo doc|${{ steps.cargo_doc.outcome }}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo clippy|${{ steps.cargo_clippy.outcome }}|" >> $GITHUB_STEP_SUMMARY
