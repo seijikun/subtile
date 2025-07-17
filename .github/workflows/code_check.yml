@@ -27,11 +27,7 @@ env:
 jobs:
   ci_code_checks_and_tests:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
     name: Code Checks and Tests
-
     steps:
       - name: "Install rust-toolchain stable"
         uses: dtolnay/rust-toolchain@stable
