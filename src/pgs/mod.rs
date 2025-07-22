@@ -37,30 +37,30 @@ pub enum PgsError {
     },
 
     /// Encapsulates errors from `Object Definition Segment` parsing.
-    #[error("Object Definition Segment parsing")]
+    #[error("object Definition Segment parsing")]
     ODSParse(#[from] ods::Error),
 
     /// Encapsulates errors from `Palette Definition Segment` parsing.
-    #[error("Palette Definition Segment parsing")]
+    #[error("palette Definition Segment parsing")]
     PDSParse(#[from] pds::Error),
 
     /// Invalid segment type code value.
-    #[error("Invalid value '{value:#02x}' for Segment Type Code ")]
+    #[error("invalid value '{value:#02x}' for Segment Type Code")]
     SegmentInvalidTypeCode {
         /// Value tried to be Interpréted in Segment Type.
         value: u8,
     },
 
     /// An error occurred during Segment Header reading.
-    #[error("Failed to read a complete segment header.")]
+    #[error("failed to read a complete segment header")]
     SegmentFailReadHeader,
 
     /// Missing expected `PG` Magic number.
-    #[error("Unable to read segment - PG missing!")]
+    #[error("unable to read segment - PG missing!")]
     SegmentPGMissing,
 
     /// `ReadError` occurred during skipping the segment.
-    #[error("Skipping Segment {type_code}")]
+    #[error("skipping Segment {type_code}")]
     SegmentSkip {
         /// Parent `ReadError`
         #[source]
@@ -70,11 +70,11 @@ pub enum PgsError {
     },
 
     /// Error if image is missing to complete the parsing of a subtitle.
-    #[error("Missing image during `Presentation Graphic Stream (PGS)` parsing")]
+    #[error("missing image during `Presentation Graphic Stream (PGS)` parsing")]
     MissingImage,
 
     /// Palette is missing after image parsing.
-    #[error("Missing palette after image parsing")]
+    #[error("missing palette after image parsing")]
     MissingPalette,
 }
 
@@ -83,7 +83,7 @@ pub enum PgsError {
 #[derive(Debug, Error)]
 pub enum ReadError {
     /// Reading of the buffer have failed.
-    #[error("Failed read buffer of size : {buffer_size}")]
+    #[error("failed read buffer of size : {buffer_size}")]
     FailedReadBuffer {
         /// `io` error
         #[source]
@@ -93,11 +93,11 @@ pub enum ReadError {
     },
 
     /// An error has occurred during buffer filling from reader.
-    #[error("Failed to fill buffer from Reader")]
+    #[error("failed to fill buffer from Reader")]
     FailedFillBuf(#[source] io::Error),
 
     /// An error has occurred during seek in reader.
-    #[error("Seek failed")]
+    #[error("seek failed")]
     FailedSeek(#[source] io::Error),
 
     /// An invalid seek value was provided.

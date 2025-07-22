@@ -93,27 +93,27 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum VobSubError {
     /// Content Error
-    #[error("Error with data")]
+    #[error("error with data")]
     Content(#[from] ContentError),
 
     /// We were unable to find a required key in an `*.idx` file.
-    #[error("Could not find required key '{0}'")]
+    #[error("could not find required key '{0}'")]
     MissingKey(&'static str),
 
     /// The lang value failed to be parsed
-    #[error("Failed to parse lang in idx file")]
+    #[error("failed to parse lang in idx file")]
     LangParsing,
 
     /// We could not parse a value.
-    #[error("Could not parse: {0}")]
+    #[error("could not parse: {0}")]
     Parse(String),
 
     /// If invalid number of palette entries found.
-    #[error("Palette must have 16 entries, found '{0}' one")]
+    #[error("palette must have 16 entries, found '{0}' one")]
     PaletteInvalidEntriesNumbers(usize),
 
     /// Parsing of palette in `*.idx` file failed.
-    #[error("Error during palette parsing from .idx file")]
+    #[error("error during palette parsing from .idx file")]
     PaletteError(#[source] NomError),
 
     /// If Scan line offsets values are not correct.
@@ -136,7 +136,7 @@ pub enum VobSubError {
     UnexpectedEndOfSubtitleData,
 
     /// If an error happen during `Control sequence` parsing.
-    #[error("Error with Control sequence parsing.")]
+    #[error("error with Control sequence parsing")]
     ControlSequence(#[source] NomError),
 
     /// If the control offset value tried to leads backwards.
@@ -157,11 +157,11 @@ pub enum VobSubError {
     PESPacket(#[source] NomError),
 
     /// If the `control packet` is incomplete
-    #[error("Incomplete control packet")]
+    #[error("incomplete control packet")]
     IncompleteControlPacket,
 
     /// Packet is too short, not bigger to read his size.
-    #[error("Packet is too short")]
+    #[error("packet is too short")]
     PacketTooShort,
 
     /// If timing info for Subtitle is missing.
@@ -169,11 +169,11 @@ pub enum VobSubError {
     MissingTimingForSubtitle,
 
     /// Missing data from parsing to construct a subtitle.
-    #[error("Missing during subtitle parsing")]
+    #[error("missing during subtitle parsing")]
     MissingSubtitleParsing(#[from] ErrorMissing),
 
     /// We could not process a subtitle image.
-    #[error("Could not process subtitle image")]
+    #[error("could not process subtitle image")]
     Image(#[from] img::Error),
 
     /// Io error on a path.
@@ -190,19 +190,19 @@ pub enum VobSubError {
 #[derive(Debug, Error)]
 pub enum NomError {
     /// We have leftover input that we didn't expect.
-    #[error("Unexpected extra input")]
+    #[error("unexpected extra input")]
     UnexpectedInput,
 
     /// Our input data ended sooner than we expected.
-    #[error("Incomplete input: '{0:?}' needed.")]
+    #[error("incomplete input: '{0:?}' needed")]
     IncompleteInput(Needed),
 
     /// An Error occurred during parsing
-    #[error("Error from nom : {0}")]
+    #[error("error from nom : {0}")]
     Error(String),
 
     /// An Failure occurred during parsing
-    #[error("Failure from nom : {0}")]
+    #[error("failure from nom : {0}")]
     Failure(String),
 }
 

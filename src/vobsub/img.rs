@@ -31,11 +31,11 @@ pub enum Error {
     },
 
     /// If index value is bigger than the image width.
-    #[error("Scan line is longer than image width: [{x},{width}]")]
+    #[error("scan line is longer than image width: [{x},{width}]")]
     ScanLineLongerThanWidth { x: usize, width: usize },
 
     /// Forward scan line parsing error.
-    #[error("Parsing scan line failed")]
+    #[error("parsing scan line failed")]
     ScanLineParsing(#[source] NomError),
 }
 

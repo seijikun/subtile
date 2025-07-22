@@ -8,10 +8,10 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum SubtileError {
     /// Error with `VobSub`
-    #[error("Error with VobSub")]
+    #[error("error with VobSub")]
     VobSub(#[from] crate::vobsub::VobSubError),
 
     /// Error during image dump
-    #[error("Dump images failed")]
+    #[error("dump images failed")]
     ImageDump(#[from] crate::image::DumpError),
 }

@@ -9,35 +9,35 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum Error {
     /// Error while tried reading `LastInSequence` flag.
-    #[error("Reading `LastInSequenceFlag` failed")]
+    #[error("reading `LastInSequenceFlag` failed")]
     LastInSequenceFlagReadData(#[source] io::Error),
 
     /// Value read for `LastInSequence` flag is invalid.
-    #[error("LastInSequenceFlag : '{value:02x}' is not a valid value")]
+    #[error("`LastInSequenceFlag` : '{value:02x}' is not a valid value")]
     LastInSequenceFlagInvalidValue { value: u8 },
 
     /// Value of flag `LastInSequence` is not managed by the current code.
-    #[error("LastInSequenceFlag::'{0}' flag is not mananged.")]
+    #[error("`LastInSequenceFlag`::'{0}' flag is not mananged")]
     LastInSequenceFlagNotManaged(LastInSequenceFlag),
 
     /// Failed during `Object ID` and `Object Version Number` skipping.
-    #[error("Skipping `Object ID` and `Object Version Number`")]
+    #[error("skipping `Object ID` and `Object Version Number`")]
     SkipObjectIdAndVerNum(#[source] ReadError),
 
     /// Failed during `Object Data Length` reading.
-    #[error("Read `Object Data Length` field.")]
+    #[error("read `Object Data Length` field")]
     ReadObjectDataLength(#[source] io::Error),
 
     /// Failed during read `Width` of the image.
-    #[error("Read With of the image incarried by the `Object Definition Segment`(s)")]
+    #[error("read With of the image incarried by the `Object Definition Segment`(s)")]
     ReadWidth(#[source] io::Error),
 
     /// Failed during read `Height` of the image.
-    #[error("Read Height of the image incarried by the `Object Definition Segment`(s)")]
+    #[error("read Height of the image incarried by the `Object Definition Segment`(s)")]
     ReadHeight(#[source] io::Error),
 
     /// The read of object data failed.
-    #[error("Try reading object data (buffer slice size: {buff_size})")]
+    #[error("try reading object data (buffer slice size: {buff_size})")]
     ObjectData {
         #[source]
         source: io::Error,

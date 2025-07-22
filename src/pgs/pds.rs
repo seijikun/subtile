@@ -5,7 +5,7 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum Error {
     /// Read `PaletteDefinitionSegment` in a buffer failed.
-    #[error("Failed to read buffer with `PaletteDefinitionSegment`")]
+    #[error("failed to read buffer with `PaletteDefinitionSegment`")]
     BufferParse(#[source] io::Error),
 }
 

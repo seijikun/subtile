@@ -13,7 +13,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum DumpError {
     /// Error with path creation
-    #[error("Could not create path for dump images '{}'", path.display())]
+    #[error("could not create path for dump images '{}'", path.display())]
     Folder {
         /// Path of the folder
         path: PathBuf,
@@ -22,7 +22,7 @@ pub enum DumpError {
     },
 
     /// Error during file dump
-    #[error("Could not write image dump file '{}'", filename.display())]
+    #[error("could not write image dump file '{}'", filename.display())]
     DumpImage {
         /// Path of the file write failed
         filename: PathBuf,
