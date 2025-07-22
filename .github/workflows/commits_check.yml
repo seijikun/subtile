@@ -44,7 +44,7 @@ jobs:
       # Particularly useful for workflow triggered on release-plz sync.
       # release-plz workflow update de pending pr twice (with cargo readme update)
       # Note: Include commit message to not cancel job of commit not updated in push
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.commit.message }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.commit.id }}
       cancel-in-progress: true
     steps:
       - name: "Install rust-toolchain stable"
