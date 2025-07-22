@@ -13,6 +13,6 @@ use thiserror::Error;
 pub enum ContentError {
     /// Indicate an invalid bounding box Area
     /// Example: If at least one coordinate value of second point are inferior of first point.
-    #[error("Invalid bounding box for Area")]
+    #[error("invalid bounding box for Area")]
     InvalidAreaBounding,
 }
