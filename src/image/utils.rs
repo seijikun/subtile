@@ -11,6 +11,7 @@ use thiserror::Error;
 
 /// Handle Error for image dump.
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum DumpError {
     /// Error with path creation
     #[error("could not create path for dump images '{}'", path.display())]

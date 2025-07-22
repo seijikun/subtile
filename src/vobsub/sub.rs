@@ -265,6 +265,7 @@ fn parse_be_u16_as_usize(buff: &[u8]) -> Result<(&[u8], usize), VobSubError> {
 
 /// Errors for missing subtitle part after parsing.
 #[derive(Debug, Error)]
+#[non_exhaustive]
 pub enum ErrorMissing {
     /// No start time.
     #[error("no start time")]

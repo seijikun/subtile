@@ -6,6 +6,7 @@ use thiserror::Error;
 /// normally return `Error`, not `SubError`, which allows to return other
 /// kinds of errors from third-party libraries.
 #[derive(Debug, Error)]
+#[non_exhaustive]
 pub enum SubtileError {
     /// Error with `VobSub`
     #[error("error with VobSub")]
