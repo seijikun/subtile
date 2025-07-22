@@ -89,6 +89,7 @@ use std::{fmt, io, path::PathBuf};
 use thiserror::Error;
 
 /// Error for `VobSub` handling.
+#[non_exhaustive]
 #[derive(Debug, Error)]
 pub enum VobSubError {
     /// Content Error

@@ -25,6 +25,7 @@ use thiserror::Error;
 
 /// Error for `Pgs` handling.
 #[derive(Debug, Error)]
+#[non_exhaustive]
 pub enum PgsError {
     /// Io error on a path.
     #[error("Io error on '{path}'")]
@@ -78,6 +79,7 @@ pub enum PgsError {
 }
 
 /// Error from data read for parsing.
+#[non_exhaustive]
 #[derive(Debug, Error)]
 pub enum ReadError {
     /// Reading of the buffer have failed.
