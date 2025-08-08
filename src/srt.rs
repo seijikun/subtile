@@ -50,5 +50,5 @@ pub fn write_line(
 ) -> Result<(), io::Error> {
     let start = TimePointSrt(time.start);
     let end = TimePointSrt(time.end);
-    writeln!(writer, "{line_idx}\n{start} --> {end}\n{text}")
+    writeln!(writer, "{line_idx}\n{start} --> {end}\n{text}\n")
 }
