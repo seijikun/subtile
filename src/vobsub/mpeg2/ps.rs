@@ -94,7 +94,7 @@ pub struct PesPacket<'a> {
 }
 
 /// Parse a Program Stream packet and the following `PES` packet.
-pub fn pes_packet(input: &[u8]) -> IResult<&[u8], PesPacket> {
+pub fn pes_packet(input: &[u8]) -> IResult<&[u8], PesPacket<'_>> {
     let (input, (ps_header, pes_packet)) = (header, pes::packet).parse(input)?;
     Ok((
         input,
@@ -164,6 +164,6 @@ impl<'a> Iterator for PesPackets<'a> {
 
 /// Iterate over all the `PES` packets in an MPEG-2 Program Stream (or at
 /// least those which contain subtitles).
-pub const fn pes_packets(input: &[u8]) -> PesPackets {
+pub const fn pes_packets(input: &[u8]) -> PesPackets<'_> {
     PesPackets { remaining: input }
 }

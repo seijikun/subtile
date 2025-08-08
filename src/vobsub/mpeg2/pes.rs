@@ -235,7 +235,7 @@ impl fmt::Debug for Packet<'_> {
     }
 }
 
-fn packet_helper(input: &[u8]) -> IResult<&[u8], Packet> {
+fn packet_helper(input: &[u8]) -> IResult<&[u8], Packet<'_>> {
     let (input, (header, header_data, substream_id, data)) =
         (header, header_data, be_u8, rest).parse(input)?;
     Ok((
@@ -249,7 +249,7 @@ fn packet_helper(input: &[u8]) -> IResult<&[u8], Packet> {
     ))
 }
 
-pub fn packet(input: &[u8]) -> IResult<&[u8], Packet> {
+pub fn packet(input: &[u8]) -> IResult<&[u8], Packet<'_>> {
     const PACKET_TAG: &[u8] = &[0x00, 0x00, 0x01, 0xbd];
     let packet_tag = tag_bytes(PACKET_TAG);
     let packet_data = length_value(be_u16, packet_helper);
