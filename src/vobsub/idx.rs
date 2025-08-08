@@ -76,7 +76,7 @@ impl Index {
     /// Open an `*.idx` file and the associated `*.sub` file.
     ///
     /// # Errors
-    /// Will return VobSubError::Io if failed to open of read `.idx` or ``.sub`` file.
+    /// Will return [`VobSubError::Io`] if failed to open of read `.idx` or ``.sub`` file.
     #[profiling::function]
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self, VobSubError> {
         let path = path.as_ref();

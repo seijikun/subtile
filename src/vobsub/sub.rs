@@ -161,7 +161,7 @@ impl From<ControlCommandTag> for u8 {
 }
 
 /// Parse a single command in a control sequence.
-fn control_command(input: &[u8]) -> IResult<&[u8], ControlCommand> {
+fn control_command(input: &[u8]) -> IResult<&[u8], ControlCommand<'_>> {
     alt((
         value(
             ControlCommand::Force,
@@ -233,7 +233,7 @@ struct ControlSequence<'a> {
 }
 
 /// Parse a single control sequence.
-fn control_sequence(input: &[u8]) -> IResult<&[u8], ControlSequence> {
+fn control_sequence(input: &[u8]) -> IResult<&[u8], ControlSequence<'_>> {
     let (input, (date, next, commands)) = (
         be_u16,
         be_u16,
@@ -444,7 +444,7 @@ impl Sub {
     /// Iterate over the subtitles associated with this `*.idx` file.
     #[must_use]
     #[allow(clippy::missing_const_for_fn)]
-    pub fn subtitles<D>(&self) -> VobsubParser<D> {
+    pub fn subtitles<D>(&self) -> VobsubParser<'_, D> {
         VobsubParser::new(&self.data)
     }
 }

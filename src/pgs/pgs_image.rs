@@ -33,7 +33,7 @@ impl RleEncodedImage {
     pub fn pixels<D: Primitive>(
         &self,
         convert: PixelConversion<LumaA<D>>,
-    ) -> RlePixelIterator<LumaA<D>> {
+    ) -> RlePixelIterator<'_, LumaA<D>> {
         RlePixelIterator {
             rle_image: self,
             raw_data: &self.raw,
