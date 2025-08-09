@@ -476,9 +476,8 @@ impl<'a, Decoder> VobsubParser<'a, Decoder> {
         let first: ps::PesPacket = try_iter!(self.pes_packets.next());
 
         // Fetch useful information from our first packet.
-        let pts_dts = match first.pes_packet.header_data.pts_dts {
-            Some(v) => v,
-            None => return Some(Err(VobSubError::MissingTimingForSubtitle)),
+        let Some(pts_dts) = first.pes_packet.header_data.pts_dts else {
+            return Some(Err(VobSubError::MissingTimingForSubtitle));
         };
         let base_time = pts_dts.pts.as_seconds();
         let substream_id = first.pes_packet.substream_id;
