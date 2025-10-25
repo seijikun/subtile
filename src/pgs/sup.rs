@@ -95,4 +95,23 @@ mod tests {
         assert!(file_subtitles.iter().eq(controls.iter()));
         assert!(file_subtitles.len() == 1);
     }
+
+    #[test]
+    fn parse_sequence_without_ods() {
+        let controls = [
+            TimeSpan::new(TimePoint::from_msecs(1660), TimePoint::from_msecs(4663)),
+            TimeSpan::new(TimePoint::from_msecs(5413), TimePoint::from_msecs(7582)),
+            TimeSpan::new(TimePoint::from_msecs(7999), TimePoint::from_msecs(11253)),
+            TimeSpan::new(TimePoint::from_msecs(52356), TimePoint::from_msecs(52398)),
+        ];
+
+        let parser = SupParser::<BufReader<File>, DecodeTimeOnly>::from_file(
+            "./fixtures/sequence_without_ods.sup"
+        )
+        .unwrap();
+
+        let file_subtitles = parser.map(|sub| sub.unwrap()).collect::<Vec<_>>();
+        assert!(file_subtitles.iter().eq(controls.iter()));
+        assert!(file_subtitles.len() == 4);
+    }
 }

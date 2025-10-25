@@ -119,8 +119,12 @@ impl PgsDecoder for DecodeTimeImage {
                     if let Some(start_time) = start_time {
                         let times = TimeSpan::new(start_time, time);
 
-                        let image = image.take().ok_or(PgsError::MissingImage)?;
-                        subtitle = Some((times, image));
+                        subtitle = if let Some(image) = image.take() { Some((times, image)) } else {
+                            // This segment sequence didn't have an image segment - inject empty (0x0) image
+                            let palette = palette.take().ok_or(PgsError::MissingPalette)?;
+                            let image = RleEncodedImage::new(0, 0, palette, vec![]);
+                            Some((times, image))
+                        };
                     } else {
                         start_time = Some(time);
                     }
