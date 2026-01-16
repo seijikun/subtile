@@ -6,7 +6,7 @@ reorder_keys = false
 
 [[rule]]
 include = ["Cargo.toml"]
-keys = ["dependencies", "lints.clippy", "lints.rust"]
+keys = ["dependencies", "dev-dependencies", "lints.clippy", "lints.rust"]
 
 [rule.formatting]
 reorder_keys = true
